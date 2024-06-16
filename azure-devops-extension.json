@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "spotcheck",
     "publisher": "igorkalders",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "name": "Spot Check",
     "description": "Enable screenshots spot checks from your application right from within Azure DevOps",
     "categories": [
