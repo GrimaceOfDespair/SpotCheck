@@ -1,0 +1,36 @@
+{
+    "manifestVersion": 1,
+    "id": "spotcheck",
+    "publisher": "igorkalders",
+    "version": "1.0.0",
+    "name": "Spot Check",
+    "description": "Enable screenshots spot checks from your application right from within Azure DevOps",
+    "categories": [
+        "Azure Pipelines"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "icons": {
+        "default": "logo.png"
+    },
+    "content": {
+        "details": {
+            "path": "overview.md"
+        }
+    },
+    "files": [
+        {
+            "path": "dist",
+            "addressable": true
+        }
+    ],
+    "scopes": [
+        "vso.build",
+        "vso.extension.default",
+        "vso.work",
+        "vso.code_write"
+    ]
+}

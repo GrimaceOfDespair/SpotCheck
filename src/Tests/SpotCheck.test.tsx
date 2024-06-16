@@ -1,0 +1,23 @@
+import React from 'react';
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    waitForElementToBeRemoved
+} from '@testing-library/react';
+import { SpotCheckContent } from '../SpotCheck/SpotCheck';
+
+jest.mock('../Common');
+
+describe('SpotCheckContent', () => {
+
+    test('SpotCheckContent - rendering', () => {
+
+        //render(<SpotCheckContent />);
+        //const textElement = screen.getByText(/Click me to change title!/i);
+        //expect(textElement).toBeDefined();
+
+    });
+
+})
