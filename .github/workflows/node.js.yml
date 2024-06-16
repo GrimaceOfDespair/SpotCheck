@@ -23,4 +23,4 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
-    - run: npm run publish-extension
+    - run: npm run publish-extension -- --auth-type pat -t ${{secrets.PUBLISH_PAT}}
