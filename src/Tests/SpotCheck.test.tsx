@@ -21,9 +21,8 @@ describe('SpotCheckContent', () => {
     test('SpotCheckContent - rendering', () => {
 
         render(<SpotCheckContent />);
-        //const textElement = screen.getByText(/Click me to change title!/i);
-        //expect(textElement).toBeDefined();
-
+        const textElement = screen.getByText(/No test suites found/i);
+        expect(textElement).toBeDefined();
     });
 
 })
