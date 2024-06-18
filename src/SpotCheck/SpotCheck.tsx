@@ -1,17 +1,7 @@
-import "./SpotCheck.scss";
-import { ArtifactBuildRestClient, getArtifactsFileEntries } from "./ArtifactBuildRestClient";
-import { ImageSplitter } from './Splitter';
-import { NoVisualChanges } from './NoVisualChanges';
-
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import * as SDK from "azure-devops-extension-sdk";
-import { CommonServiceIds, getClient, IColor, IProjectPageService, MessageBannerLevel, IGlobalMessagesService, IExtensionDataService, IHostNavigationService } from "azure-devops-extension-api";
-import { IBuildPageDataService, BuildServiceIds, IBuildPageData, BuildDefinition, BuildRestClient } from "azure-devops-extension-api/Build";
-import { FileContainerRestClient } from "azure-devops-extension-api/FileContainer";
+import { getClient } from "azure-devops-extension-api/Common";
 import { LocationsRestClient } from "azure-devops-extension-api/Locations/LocationsClient";
-import { GitServiceIds, IVersionControlRepositoryService } from "azure-devops-extension-api/Git";
-import { GitRepository } from "azure-devops-extension-api/Git/Git";
+
+import * as SDK from "azure-devops-extension-sdk";
 
 import { Card } from "azure-devops-ui/Card";
 import { Pill, PillSize, PillVariant } from "azure-devops-ui/Pill";
@@ -21,7 +11,6 @@ import { Header, TitleSize } from "azure-devops-ui/Header";
 import { IListItemDetails, List, ListItem, ListSelection } from "azure-devops-ui/List";
 import { DetailsPanel, MasterPanel, MasterPanelHeader } from "azure-devops-ui/MasterDetails";
 import { ConditionalChildren } from "azure-devops-ui/ConditionalChildren";
-import { Splitter, SplitterDirection, SplitterElementPosition } from "azure-devops-ui/Splitter";
 import { IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import {
     BaseMasterDetailsContext,
@@ -40,18 +29,23 @@ import {
     Table,
     TwoLineTableCell,
 } from "azure-devops-ui/Table";
-import { TextField, TextFieldStyle } from "azure-devops-ui/TextField";
-import { VssPersona } from "azure-devops-ui/VssPersona";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ScreenSizeObserver } from "azure-devops-ui/Utilities/ScreenSize";
-import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
-import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
+import { ZeroData } from "azure-devops-ui/ZeroData";
 import { Image } from "azure-devops-ui/Image";
-import { ISuite, ITest, IPanelContentState, IReport } from "./Models";
-import { downloadArtifact, openUpdateDialog } from "./UpdateScreenshot";
-import { showRootComponent } from "../Common";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Page } from "azure-devops-ui/Page";
+
+import * as React from "react";
+
+import { showRootComponent } from "../Common";
+
+import { ImageSplitter } from './Splitter';
+import { NoVisualChanges } from './NoVisualChanges';
+import { ISuite, ITest, IPanelContentState, IReport } from "./Models";
+import { downloadArtifact, openUpdateDialog } from "./UpdateScreenshot";
+
+import "./SpotCheck.scss";
 
 var SampleData: ISuite[] = [] as ISuite[];
 const artifactName = 'screenshots';

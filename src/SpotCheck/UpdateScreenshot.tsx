@@ -1,4 +1,4 @@
-import { CommonServiceIds, getClient, IHostPageLayoutService, IProjectPageService, MessageBannerLevel, IGlobalMessagesService } from "azure-devops-extension-api";
+import { CommonServiceIds, getClient, IHostPageLayoutService, IProjectPageService, MessageBannerLevel, IGlobalMessagesService } from "azure-devops-extension-api/Common";
 import { IBuildPageDataService, BuildServiceIds, BuildReference, BuildRestClient } from "azure-devops-extension-api/Build";
 import { GitRestClient } from "azure-devops-extension-api/Git";
 import { GitChange, GitCommitRef, GitItem, GitPush, GitRefUpdate, ItemContentType, VersionControlChangeType } from "azure-devops-extension-api/Git/Git";

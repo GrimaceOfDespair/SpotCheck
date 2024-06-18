@@ -1,9 +1,12 @@
-import { CommonServiceIds } from "azure-devops-extension-api";
-import { BuildRestClient, BuildServiceIds } from "azure-devops-extension-api/Build";
-import { GitRestClient } from "azure-devops-extension-api/Git";
-import { LocationsRestClient } from "azure-devops-extension-api/Locations/LocationsClient";
+import { CommonServiceIds } from "azure-devops-extension-api/Common";
+import { BuildServiceIds } from "azure-devops-extension-api/Build";
+
 
 export function init(): Promise<void> {
+    return new Promise((resolve, reject) => resolve());
+}
+
+export function ready(): Promise<void> {
     return new Promise((resolve, reject) => resolve());
 }
 

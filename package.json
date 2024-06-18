@@ -35,7 +35,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
-    "@testing-library/jest-dom": "^6.4.6",
+    "@babel/preset-env": "^7.24.7",
+    "@testing-library/jest-dom": "^5.11.0",
     "@testing-library/react": "^10.4.4",
     "@types/jest": "^29.5.12",
     "@types/react": "^16.14.0",
@@ -44,6 +45,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "jest-junit-reporter": "^1.1.0",
     "rimraf": "^5.0.7",
     "sass": "^1.77.5",
@@ -59,11 +61,15 @@
   },
   "jest": {
     "transform": {
-      "^.+\\.(js|ts|tsx|jsx)$": [
+      "^.+\\.tsx?$": [
         "ts-jest",
         {
           "tsconfig": "tsconfig.test.json"
         }
+      ],
+      "^.+\\.jsx?$": [
+        "babel-jest",
+        {}
       ]
     },
     "transformIgnorePatterns": [
@@ -73,7 +79,7 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
       "\\.(css|less|scss)$": "<rootDir>/src/__mocks__/styleMock.js"
     },
-    "preset": "ts-jest/presets/js-with-babel",
+    "preset": "ts-jest",
     "testResultsProcessor": "./node_modules/jest-junit-reporter",
     "collectCoverage": true,
     "coverageReporters": [

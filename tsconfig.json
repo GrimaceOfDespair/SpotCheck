@@ -6,7 +6,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strict": true,
-    "target": "ES6",
+    "target": "es5",
     "rootDir": "src/",
     "outDir": "dist/",
     "jsx": "react",

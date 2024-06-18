@@ -1,18 +1,18 @@
 import { BuildRestClient } from "./Build";
 import { GitRestClient } from "./Git";
-import { LocationsRestClient } from "./Locations";
+import { LocationsRestClient } from "./Locations/LocationsClient";
 
-export function getClient(clientClass: any) {
+export function getClient(clientClass: { name: string}) {
     
-    if (typeof clientClass === typeof GitRestClient) {
+    if (clientClass.name === 'GitRestClient') {
         return new GitRestClient({});
     }
 
-    if (typeof clientClass === typeof BuildRestClient) {
+    if (clientClass.name === 'BuildRestClient') {
         return new BuildRestClient();
     }
 
-    if (typeof clientClass === typeof LocationsRestClient) {
+    if (clientClass.name === 'LocationsRestClient') {
         return new LocationsRestClient();
     }
 }
