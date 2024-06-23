@@ -106,7 +106,8 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         if (!report) {
             return (<ZeroData
                 primaryText="No test suites found"
-                imageAltText="No test suites found">
+                imageAltText="No test suites found"
+                imagePath={`data:image/png;base64,${NoVisualChanges}`}>
             </ZeroData>)
         }
 
