@@ -22,7 +22,8 @@ fs.readdirSync(codeDir).filter(dir => {
 module.exports = (env, argv) => ({
     entry: entries,
     output: {
-        filename: "[name]/[name].js"
+        filename: "[name]/[name].js",
+        publicPath: "/dist/",
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
