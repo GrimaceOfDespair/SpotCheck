@@ -9,3 +9,12 @@ export const showError = async (message: string) => {
         message
     });
 }
+
+export const showInfo = async (message: string) => {
+    const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
+    globalMessagesSvc.addBanner({
+        level: MessageBannerLevel.info,
+        customIcon: "StatusCircleCheckmark",
+        message
+    });
+}
