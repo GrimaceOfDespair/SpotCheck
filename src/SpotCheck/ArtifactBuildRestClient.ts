@@ -1,9 +1,13 @@
-import { BuildRestClient } from 'azure-devops-extension-api/Build'
+import { BuildRestClient, BuildServiceIds, IBuildPageDataService } from 'azure-devops-extension-api/Build'
 import { RestClientBase } from 'azure-devops-extension-api/Common/RestClientBase';
 import { IVssRestClientOptions } from 'azure-devops-extension-api/Common/Context';
 import { getAccessToken } from 'azure-devops-extension-sdk';
 import * as JSZip from 'jszip';
+import * as SDK from "azure-devops-extension-sdk";
+
 import { FileEntry, IArtifactData } from './ArtifactModels';
+import { CommonServiceIds, IExtensionDataService } from 'azure-devops-extension-api';
+import { IBuildConfiguration } from '../Config/Models';
 
 export type ArtifactBuildRestClient = Pick<BuildRestClient, 'getArtifacts'>
 
@@ -80,4 +84,18 @@ export async function getArtifactsFileEntries(
 			})
 	)
 	return files.reduce((acc, val) => acc.concat(val), []);;
+}
+
+export async function getBuildConfiguration() {
+	const buildPageService: IBuildPageDataService = await SDK.getService(BuildServiceIds.BuildPageDataService);
+	const buildPageData = await buildPageService.getBuildPageData();
+	const buildDefinitionId = buildPageData?.definition?.id ?? 0;
+
+	const accessToken = await SDK.getAccessToken();
+
+	const extDataService = await SDK.getService<IExtensionDataService>(CommonServiceIds.ExtensionDataService);
+	const dataManager = await extDataService.getExtensionDataManager(SDK.getExtensionContext().id, accessToken);
+	const buildConfigurations = await dataManager.getValue<IBuildConfiguration[]>('buildConfigurations') ?? [];
+
+	return buildConfigurations.find(buildConfiguration => buildConfiguration.buildDefinitionId == buildDefinitionId);
 }

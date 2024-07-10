@@ -143,9 +143,9 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
 
     private setBuildConfigurations(buildConfigurations: IBuildConfiguration[]) {
         let newBuildConfiguration = [...buildConfigurations];
-        if (newBuildConfiguration.length == 0 || newBuildConfiguration[newBuildConfiguration.length - 1].buildId) {
+        if (newBuildConfiguration.length == 0 || newBuildConfiguration[newBuildConfiguration.length - 1].buildDefinitionId) {
             newBuildConfiguration.push({
-                buildId: 0,
+                buildDefinitionId: 0,
                 gitPath: '',
                 artifact:'' });
         }
@@ -200,9 +200,9 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
         );
     }
 
-    private updateRepository(buildConfiguration: IBuildConfiguration, buildId?: number) {
+    private updateRepository(buildConfiguration: IBuildConfiguration, buildDefinitionId?: number) {
 
-        buildConfiguration.buildId = buildId ?? 0;
+        buildConfiguration.buildDefinitionId = buildDefinitionId ?? 0;
 
         this.setBuildConfigurations(this.buildConfigurations.value);
     }
@@ -214,10 +214,10 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
         tableItem: IBuildConfiguration
         ): JSX.Element {
 
-            if (tableItem.buildId) {
+            if (tableItem.buildDefinitionId) {
 
-                const buildDefinition = this.buildDefinitionList.value.find(r => Number.parseInt(r.id) == tableItem.buildId);
-                const displayRepository = buildDefinition?.text ?? `${tableItem.buildId}`;
+                const buildDefinition = this.buildDefinitionList.value.find(r => Number.parseInt(r.id) == tableItem.buildDefinitionId);
+                const displayRepository = buildDefinition?.text ?? `${tableItem.buildDefinitionId}`;
 
                 return (
                     <SimpleTableCell
@@ -305,7 +305,7 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
                     columnIndex={columnIndex}
                     tableColumn={tableColumn}
                     key={"col-" + columnIndex}>
-                    <ConditionalChildren renderChildren={!!tableItem.buildId}>
+                    <ConditionalChildren renderChildren={!!tableItem.buildDefinitionId}>
                         <Button
                             ariaLabel="Remove configuration"
                             iconProps={{

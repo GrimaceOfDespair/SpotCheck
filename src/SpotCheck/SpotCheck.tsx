@@ -1,4 +1,4 @@
-import { getClient } from "azure-devops-extension-api/Common";
+import { CommonServiceIds, IExtensionDataService, getClient } from "azure-devops-extension-api/Common";
 import { LocationsRestClient } from "azure-devops-extension-api/Locations/LocationsClient";
 
 import * as SDK from "azure-devops-extension-sdk";
@@ -46,9 +46,11 @@ import { ISuite, ITest, IPanelContentState, IReport } from "./Models";
 import { downloadArtifact, openUpdateDialog } from "./UpdateScreenshot";
 
 import "./SpotCheck.scss";
+import { IBuildConfiguration } from "../Config/Models";
+import { BuildServiceIds, IBuildPageDataService } from "azure-devops-extension-api/Build";
+import { getBuildConfiguration } from "./ArtifactBuildRestClient";
 
 var SampleData: ISuite[] = [] as ISuite[];
-const artifactName = 'screenshots';
 
 export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
 
@@ -62,7 +64,14 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         
         await SDK.ready();
 
+        const buildConfiguration = await getBuildConfiguration();
+        if (!buildConfiguration) {
+            return;
+        }
+
+        const { artifact: artifactName } = buildConfiguration;
         const { artifact, containerId } = await downloadArtifact(artifactName, 'output.json');
+        
         if (!artifact) {
             return;
         }
@@ -78,7 +87,7 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
             return {
                 path,
                 artifactName: !path ? '' : path.replace(new RegExp(`^${regexArtifactName}/`), ''),
-                url: !path ? '' : baseUrl + encodeURIComponent(path)
+                url: !path ? '' : `${baseUrl}${artifactName}/${encodeURIComponent(path)}`
             };
         };
 
@@ -416,7 +425,7 @@ const spotCheckActions = (test: ITest): IHeaderCommandBarItem[] => {
             id: "testCreate",
             important: true,
             onActivate: () => {
-                openUpdateDialog(artifactName, test);
+                openUpdateDialog(test);
             },
             text: "Baseline",
             tooltipProps: {

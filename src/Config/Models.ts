@@ -3,7 +3,7 @@ export interface IPanelConfigState {
 }
 
 export interface IBuildConfiguration {
-    buildId: number,
+    buildDefinitionId: number,
     gitPath: string,
     artifact: string,
 }

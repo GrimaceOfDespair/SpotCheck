@@ -6,9 +6,8 @@ import { LocationsRestClient } from "azure-devops-extension-api/Locations/Locati
 import * as SDK from "azure-devops-extension-sdk";
 import { ITest } from "./Models";
 import { showError } from "./Common";
-import { getArtifactsFileEntries } from "./ArtifactBuildRestClient";
-
-const repositoryBasePath = '';
+import { getArtifactsFileEntries, getBuildConfiguration } from "./ArtifactBuildRestClient";
+import { IBuildConfiguration } from "../Config/Models";
 
 export const downloadArtifact = async (artifactName: string, fileName: string, isBinary: boolean = false) => {
     const pps = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
@@ -19,8 +18,6 @@ export const downloadArtifact = async (artifactName: string, fileName: string, i
     const buildPageService: IBuildPageDataService = await SDK.getService(BuildServiceIds.BuildPageDataService);
     const buildPageData = await buildPageService.getBuildPageData();
     const buildId = buildPageData?.build?.id ?? 0;
-
-    console.log(buildPageData);
 
     const buildClient = getClient(BuildRestClient);
     const artifactContents = await getArtifactsFileEntries(buildClient, projectName, buildId, artifactName, isBinary);
@@ -37,13 +34,19 @@ export const downloadArtifact = async (artifactName: string, fileName: string, i
     }
 }
 
-export const openUpdateDialog = async (artifactName: string, test: ITest) => {
+export const openUpdateDialog = async (test: ITest) => {
 
     const pps = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
     const project = await pps.getProject();
 
     if (!project) {
         showError('No current project found to update baseline on');
+        return;
+    }
+
+    const buildConfiguration = await getBuildConfiguration();
+    if (!buildConfiguration) {
+        showError('SpotCheck not configured for this build');
         return;
     }
 
@@ -94,14 +97,16 @@ export const openUpdateDialog = async (artifactName: string, test: ITest) => {
         cancelText: "Cancel",
         onClose: async (result) => {
             if (result) {
-                updateScreenshot(artifactName, project.name, build, commitHash, test);
+                updateScreenshot(buildConfiguration, project.name, build, commitHash, test);
             }
         }
     });
 };
 
 
-export const updateScreenshot = async(artifactName: string, projectName: string, build: BuildReference, oldObjectId: string, test: ITest) => {
+export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, projectName: string, build: BuildReference, oldObjectId: string, test: ITest) => {
+
+    const { artifact: artifactName, gitPath: repositoryBasePath } = buildConfiguration;
 
     // Download screenshot from artifacts
     const { artifact } = await downloadArtifact(artifactName, test.comparison.artifactName, true);
