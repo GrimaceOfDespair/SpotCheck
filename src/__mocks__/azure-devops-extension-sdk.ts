@@ -14,6 +14,19 @@ export const mockOpenMessageDialog = jest.fn();
 export const mockCloseBanner = jest.fn();
 export const mockGetProject = jest.fn();
 export const mockGetBuildPageData = jest.fn();
+export const mockGetExtensionDataManager = jest.fn(dataManager => ({
+    getValue() {
+        return [];
+    }
+}));
+
+export function getExtensionContext() {
+    return 'mocked_extension_context';
+}
+
+export function getAccessToken() {
+    return 'mocked_access_token';
+}
 
 export function getService(contributionId: string) {
     switch (contributionId) {
@@ -32,6 +45,11 @@ export function getService(contributionId: string) {
                 getProject: mockGetProject,
             };
 
+        case CommonServiceIds.ExtensionDataService:
+            return {
+                getExtensionDataManager: mockGetExtensionDataManager,
+            };
+    
         case BuildServiceIds.BuildPageDataService:
             return {
                 getBuildPageData: mockGetBuildPageData,
