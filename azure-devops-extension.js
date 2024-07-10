@@ -1,5 +1,7 @@
 module.exports = (env) => {
 
+    const publisher = 'igorkalders';
+
     const isDevelopment = env.mode == 'development';
 
     const [id, name] = isDevelopment
@@ -10,7 +12,7 @@ module.exports = (env) => {
         manifestVersion: 1,
         id,
         name,
-        publisher: 'igorkalders',
+        publisher,
         version: '1.0.0',
         description: 'Enable screenshots spot checks from your application right from within Azure DevOps',
         categories: [
@@ -58,7 +60,7 @@ module.exports = (env) => {
                     {
                         name: 'Feature',
                         properties: {
-                            featureId: `${id}.spotcheck-toggle`
+                            featureId: `${publisher}.${id}.spotcheck-toggle`
                         }
                     }
                 ]
