@@ -44,46 +44,50 @@ export async function getArtifactsFileEntries(
 	buildClient: ArtifactBuildRestClient,
 	project: string,
 	buildId: number,
-    artifactName: string,
+    artifactPattern: string,
     isBinary: boolean = false
 	): Promise<FileEntry[]> {
 
-	const artifacts = await buildClient.getArtifacts(project, buildId)
-    
-	const files = await Promise.all(
-		artifacts
-			.filter(artifact => 
-                artifact.name === artifactName
-			)
-			.map(async artifact => {
-				const requestUrl = artifact.resource.downloadUrl;
-				const arrayBuffer = await getArtifactContentZip(requestUrl)
+	let artifacts = await buildClient.getArtifacts(project, buildId);
 
-				if (arrayBuffer) {
-					const zip = await JSZip.loadAsync(arrayBuffer)
+	const regexPattern = artifactPattern.replace('?', '(?<index>[0-9]+)');
+	if (regexPattern != artifactPattern) {
+		const regex = new RegExp(regexPattern);
+		artifacts = artifacts
+			.sort((a1, a2) =>
+				parseInt(regex.exec(a2.name)?.groups?.index ?? '0') - parseInt(regex.exec(a1.name)?.groups?.index ?? '0'))
+	} else {
+		artifacts = artifacts.filter(a =>
+			a.name == artifactPattern);
+	}
 
-					try {
-						return Object
-							.values(zip.files)
-							.filter(entry => !entry.dir)
-							.map(entry => ({
-                                uri:             artifact.resource.url,
-								name:            entry.name.replace(`${artifact.name}/`, ''),
-								artifactName:    artifact.name,
-                                containerId:     artifact.resource.data.split('/')[1],
-								filePath:        entry.name.replace(`${artifact.name}/`, ''),
-								buildId:         buildId,
-								contentsPromise: entry.async(isBinary ? 'base64' : 'binarystring')
-							}))
-					} catch (e) {
-						console.error(`Error loading artifact ${artifact.name} from build ${buildId}`)
-					}
-				}
+	const [artifact] = artifacts;
+	const requestUrl = artifact.resource.downloadUrl;
+	const arrayBuffer = await getArtifactContentZip(requestUrl)
 
-                return <FileEntry[]>[];
-			})
-	)
-	return files.reduce((acc, val) => acc.concat(val), []);;
+	if (arrayBuffer) {
+
+		const zip = await JSZip.loadAsync(arrayBuffer)
+
+		try {
+			return Object
+				.values(zip.files)
+				.filter(entry => !entry.dir)
+				.map(entry => ({
+					uri:             artifact.resource.url,
+					name:            entry.name.replace(`${artifact.name}/`, ''),
+					artifactName:    artifact.name,
+					containerId:     artifact.resource.data.split('/')[1],
+					filePath:        entry.name.replace(`${artifact.name}/`, ''),
+					buildId:         buildId,
+					contentsPromise: entry.async(isBinary ? 'base64' : 'binarystring')
+				}))
+		} catch (e) {
+			console.error(`Error loading artifact ${artifact.name} from build ${buildId}`)
+		}
+	}
+
+	return <FileEntry[]>[];
 }
 
 export async function getBuildConfiguration() {

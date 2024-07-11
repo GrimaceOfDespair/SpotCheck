@@ -43,7 +43,7 @@ import { showRootComponent } from "../Common";
 import { ImageSplitter } from './Splitter';
 import { NoVisualChanges } from './NoVisualChanges';
 import { ISuite, ITest, IPanelContentState, IReport } from "./Models";
-import { downloadArtifact, openUpdateDialog } from "./UpdateScreenshot";
+import { downloadArtifact, downloadArtifacts, openUpdateDialog } from "./UpdateScreenshot";
 
 import "./SpotCheck.scss";
 import { IBuildConfiguration } from "../Config/Models";
@@ -70,39 +70,46 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         }
 
         const { artifact: artifactName } = buildConfiguration;
-        const { artifact, containerId } = await downloadArtifact(artifactName, 'output.json');
-        
-        if (!artifact) {
+        const artifacts = await downloadArtifacts(artifactName);
+
+        if (!artifacts || artifacts.length == 0) {
             return;
         }
 
-        const locationClient = getClient(LocationsRestClient);
-        const resourceArea = await locationClient.getResourceArea('79134c72-4a58-4b42-976c-04e7115f32bf');
+        const reportJson = artifacts.find(artifact => artifact.name == 'output.json');
+        if (!reportJson) {
+            return;
+        }
 
-        const report: IReport = JSON.parse(await artifact.contentsPromise);
-        const baseUrl = `${resourceArea.locationUrl}_apis/resources/Containers/${containerId}/${artifactName}?itemPath=`;
-
-        const getScreenshot = (path: string) => {
+        const getScreenshot = async (path: string) => {
             const regexArtifactName = artifactName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+
+            const artifact = artifacts.find(artifact => artifact.name == path);
+            const url = !artifact
+                ? `data:image/png;base64,${NoVisualChanges}`
+                : `data:image/png;base64,${btoa(await artifact.contentsPromise)}`;
+
             return {
                 path,
                 artifactName: !path ? '' : path.replace(new RegExp(`^${regexArtifactName}/`), ''),
-                url: !path ? '' : `${baseUrl}${artifactName}/${encodeURIComponent(path)}`
+                url,
             };
         };
 
-        SampleData = report.suites.map(suite => ({
+        const report: IReport = JSON.parse(await reportJson.contentsPromise);
+
+        SampleData = await Promise.all(report.suites.map(async suite => ({
             ... suite,
             pass: suite.tests.filter(test => test.status == 'pass').length,
             fail: suite.tests.filter(test => test.status == 'fail').length,
-            tests: suite.tests.map(test => ({
+            tests: await Promise.all(suite.tests.map(async test => ({
                 ... test,
                 pass: test.status == 'pass',
-                comparison: getScreenshot(test.comparisonPath),
-                diff: getScreenshot(test.diffPath),
-                baseline: getScreenshot(test.baselinePath)
-            }))
-        }));
+                comparison: await getScreenshot(test.comparisonPath),
+                diff: await getScreenshot(test.diffPath),
+                baseline: await getScreenshot(test.baselinePath)
+            })))
+        })));
 
         this.setState({
             report,

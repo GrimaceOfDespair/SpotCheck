@@ -9,7 +9,7 @@ import { showError } from "./Common";
 import { getArtifactsFileEntries, getBuildConfiguration } from "./ArtifactBuildRestClient";
 import { IBuildConfiguration } from "../Config/Models";
 
-export const downloadArtifact = async (artifactName: string, fileName: string, isBinary: boolean = false) => {
+export const downloadArtifacts = async (artifactPattern: string, isBinary: boolean = false) => {
     const pps = await SDK.getService<IProjectPageService>(CommonServiceIds.ProjectPageService);
     const project = await pps.getProject();
     const projectId = project?.id ?? '';
@@ -20,7 +20,13 @@ export const downloadArtifact = async (artifactName: string, fileName: string, i
     const buildId = buildPageData?.build?.id ?? 0;
 
     const buildClient = getClient(BuildRestClient);
-    const artifactContents = await getArtifactsFileEntries(buildClient, projectName, buildId, artifactName, isBinary);
+    return await getArtifactsFileEntries(buildClient, projectName, buildId, artifactPattern, isBinary);
+}
+
+export const downloadArtifact = async (artifactName: string, fileName: string, isBinary: boolean = false) => {
+
+    const artifactContents = await downloadArtifacts(artifactName, isBinary);
+
     if (!artifactContents.length) {
         return {
             artifact: null,
