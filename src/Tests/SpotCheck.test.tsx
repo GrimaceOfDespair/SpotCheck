@@ -21,7 +21,7 @@ describe('SpotCheckContent', () => {
     test('SpotCheckContent - rendering', () => {
 
         render(<SpotCheckContent />);
-        const textElement = screen.getByText(/No build found/i);
+        const textElement = screen.getByText(/Loading report/i);
         expect(textElement).toBeDefined();
     });
 
