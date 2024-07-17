@@ -111,7 +111,7 @@ export const openUpdateDialog = async (test: ITest) => {
         cancelText: "Cancel",
         onClose: async (result) => {
             if (result) {
-                updateScreenshot(buildConfiguration, project.name, build, branch, commit, test);
+                updateScreenshot(buildConfiguration, project.name, build, branch, latestCommitOnBranch, test);
             }
         }
     });
