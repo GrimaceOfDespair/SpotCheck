@@ -62,6 +62,10 @@ export async function getArtifactsFileEntries(
 	}
 
 	const [artifact] = artifacts;
+	if (!artifact?.resource) {
+		return [];
+	}
+
 	const requestUrl = artifact.resource.downloadUrl;
 	const arrayBuffer = await getArtifactContentZip(requestUrl)
 
@@ -87,7 +91,7 @@ export async function getArtifactsFileEntries(
 		}
 	}
 
-	return <FileEntry[]>[];
+	return [];
 }
 
 export async function getBuildConfiguration() {

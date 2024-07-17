@@ -35,6 +35,7 @@ import { ZeroData } from "azure-devops-ui/ZeroData";
 import { Image } from "azure-devops-ui/Image";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Page } from "azure-devops-ui/Page";
+import { Spinner } from "azure-devops-ui/Spinner";
 
 import * as React from "react";
 
@@ -56,7 +57,7 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
 
     constructor(props: {}) {
         super(props);
-        this.state = {};
+        this.state = { phase: 'init' };
     }
 
     public async componentDidMount() {
@@ -66,6 +67,10 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
 
         const buildConfiguration = await getBuildConfiguration();
         if (!buildConfiguration) {
+            this.setState({
+                phase: 'load-build',
+                status: `No build found`
+            });
             return;
         }
 
@@ -73,11 +78,19 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         const artifacts = await downloadArtifacts(artifactName);
 
         if (!artifacts || artifacts.length == 0) {
+            this.setState({
+                phase: 'load-artifact',
+                status: `Build artifact "${artifactName}" not found`
+            });
             return;
         }
 
         const reportJson = artifacts.find(artifact => artifact.name == 'output.json');
         if (!reportJson) {
+            this.setState({
+                phase: 'load-build',
+                status: `No output.json found in build artifact "${artifactName}"`
+            });
             return;
         }
 
@@ -112,23 +125,36 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         })));
 
         this.setState({
-            report,
+            phase: 'done',
+            status: report.total ? undefined : 'Test report is empty',
+            report
         });
     }
 
     public render(): JSX.Element {
-        const { report } = this.state;
+        const { phase, status, report } = this.state;
 
-        if (!report) {
-            return (<ZeroData
-                primaryText="No test suites found"
-                imageAltText="No test suites found"
-                imagePath={`data:image/png;base64,${NoVisualChanges}`}>
-            </ZeroData>)
+        switch (phase)
+        {
+            case 'init':
+                return (<Spinner label="Loading report" />);
+
+            case 'load-build':
+            case 'load-artifact':
+            case 'load-report':
+            case 'done':
+
+                if (status) {
+                    return (<ZeroData
+                        primaryText={status}
+                        imageAltText={status}
+                        imagePath={`data:image/png;base64,${NoVisualChanges}`}>
+                    </ZeroData>)
+                }
         }
 
         return (
-            <MasterDetailsContext.Provider value={rootDetailsContext}>            
+            <MasterDetailsContext.Provider value={rootDetailsContext}>
                 <MasterPanel className="master-example-panel" />
                 <DetailsPanel />
             </MasterDetailsContext.Provider>

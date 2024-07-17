@@ -1,5 +1,7 @@
 
 export interface IPanelContentState {
+    phase: 'init' | 'load-build' | 'load-artifact' | 'load-report' | 'done';
+    status?: string;
     report?: IReport;
 }
 export interface IReport {

@@ -1,6 +1,6 @@
 import { CommonServiceIds, getClient, IHostPageLayoutService, IProjectPageService, MessageBannerLevel, IGlobalMessagesService } from "azure-devops-extension-api/Common";
 import { IBuildPageDataService, BuildServiceIds, BuildReference, BuildRestClient } from "azure-devops-extension-api/Build";
-import { GitRestClient } from "azure-devops-extension-api/Git";
+import { GitRestClient, GitServiceIds } from "azure-devops-extension-api/Git";
 import { GitChange, GitCommitRef, GitItem, GitPush, GitRefUpdate, ItemContentType, VersionControlChangeType } from "azure-devops-extension-api/Git/Git";
 import { LocationsRestClient } from "azure-devops-extension-api/Locations/LocationsClient";
 import * as SDK from "azure-devops-extension-sdk";
@@ -72,15 +72,23 @@ export const openUpdateDialog = async (test: ITest) => {
         return;
     }
 
-    const { sourceBranch, sourceRepositoryId, sourceVersion } = buildPageData.build as any;
+    const { parameters, sourceBranch, sourceRepositoryId, sourceVersion } = buildPageData.build as any;
 
-    if (!sourceBranch) {
+    const {
+        'system.pullRequest.sourceBranch': prBranch,
+        'system.pullRequest.sourceCommitId': prCommit
+    } = JSON.parse(parameters ?? '{}');
+
+    const branch = prBranch ?? sourceBranch;
+    if (!branch) {
         showError('No git branch found to update baseline on');
         return;
     }
 
+    const commit = prCommit ?? sourceVersion;
+
     const gitClient = getClient(GitRestClient);
-    const branchFilter = sourceBranch.replace(/^refs\//, '');
+    const branchFilter = branch.replace(/^refs\//, '');
     const refs = await gitClient.getRefs(sourceRepositoryId, project.id, branchFilter);
 
     if (!refs || !refs[0]) {
@@ -88,8 +96,8 @@ export const openUpdateDialog = async (test: ITest) => {
         return;
     }
 
-    const commitHash = refs[0].objectId;
-    const isLatestVersion = commitHash == sourceVersion;
+    const latestCommitOnBranch = refs[0].objectId;
+    const isLatestVersion = latestCommitOnBranch == commit;
     const message = isLatestVersion
         ? `Set this screenshot as the new baseline for ${test.name}?`
         : `New code was committed after this build, so the current screenshot may be inaccurate. Are you sure you want to set this screenshot as the new baseline for ${test.name}?`;
@@ -103,14 +111,14 @@ export const openUpdateDialog = async (test: ITest) => {
         cancelText: "Cancel",
         onClose: async (result) => {
             if (result) {
-                updateScreenshot(buildConfiguration, project.name, build, commitHash, test);
+                updateScreenshot(buildConfiguration, project.name, build, branch, commit, test);
             }
         }
     });
 };
 
 
-export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, projectName: string, build: BuildReference, oldObjectId: string, test: ITest) => {
+export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, projectName: string, build: BuildReference, branch: string, commit: string, test: ITest) => {
 
     const { artifact: artifactName, gitPath: repositoryBasePath } = buildConfiguration;
 
@@ -122,14 +130,15 @@ export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, p
     }
 
     // Push new screenshot to repo
-    const { sourceBranch, sourceRepositoryId, sourceRepositoryName } = build as any;
+    const { sourceRepositoryId, sourceRepositoryName } = build as any;
+
     const content = await artifact.contentsPromise;
     const path = `${repositoryBasePath}/${test.baselinePath}`;
 
     const gitPush = {
         refUpdates: [{
-            name: sourceBranch,
-            oldObjectId,
+            name: branch,
+            oldObjectId: commit,
         } as GitRefUpdate],
         commits: [{
             comment: `Update baseline screenshot for test "${test.name}"`,
@@ -149,21 +158,33 @@ export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, p
     } as GitPush;
 
     const gitClient = getClient(GitRestClient);
-    const push = await gitClient.createPush(gitPush, sourceRepositoryId, projectName);
+
+    try {
+        const push = await gitClient.createPush(gitPush, sourceRepositoryId, projectName);
+
+        const locationClient = getClient(LocationsRestClient);
+        const resourceArea = await locationClient.getResourceArea('79134c72-4a58-4b42-976c-04e7115f32bf');
+        const pushUrl = `${resourceArea.locationUrl}${projectName}/_git/${sourceRepositoryName}/pushes/${push.pushId}`;
+
+        const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
+        globalMessagesSvc.addBanner({
+            level: MessageBannerLevel.info,
+            customIcon: "ReceiptCheck",
+            messageFormat: `Updated the new baseline image of "${test.name}. {0}"`,
+            messageLinks: [{
+                name: "View the git commit",
+                href: pushUrl
+            }]
+        });
+    } catch (error) {
+        console.log('error', error);
+        const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
+        globalMessagesSvc.addBanner({
+            level: MessageBannerLevel.error,
+            customIcon: "ErrorBadge",
+            message: `Unable to update baseline image of "${test.name}"`,
+        });
+    }
 
     // Show banner with push link
-    const locationClient = getClient(LocationsRestClient);
-    const resourceArea = await locationClient.getResourceArea('79134c72-4a58-4b42-976c-04e7115f32bf');
-    const pushUrl = `${resourceArea.locationUrl}${projectName}/_git/${sourceRepositoryName}/pushes/${push.pushId}`;
-
-    const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
-    globalMessagesSvc.addBanner({
-        level: MessageBannerLevel.info,
-        customIcon: "ReceiptCheck",
-        messageFormat: `Updated the new baseline image of "${test.name}. {0}"`,
-        messageLinks: [{
-            name: "View the git commit",
-            href: pushUrl
-        }]
-    });
 }
