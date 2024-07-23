@@ -89,6 +89,16 @@ module.exports = (env) => {
                     order: 30,
                     uri: 'dist/Config/Config.html'
                 }
+            },
+            {
+                id: "spotcheck-pr-task",
+                type: "ms.vss-distributed-task.task",
+                targets: [
+                    "ms.vss-distributed-task.tasks"
+                ],
+                properties: {
+                    name: "dist/SpotCheckPullRequest"
+                }
             }
         ]
     }

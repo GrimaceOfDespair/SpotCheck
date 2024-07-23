@@ -1,0 +1,31 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "5641ef4f-e16c-40c5-ae56-fd09bb6b618b",
+    "name": "SpotCheckPullRequest",
+    "friendlyName": "SpotCheck PullRequest",
+    "description": "Analyze e2e json report and add feedback to pull request",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Igor Kalders",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Analyze $(reportFile)",
+    "inputs": [
+        {
+            "name": "reportFile",
+            "type": "string",
+            "label": "Report file",
+            "defaultValue": "output.json",
+            "required": false,
+            "helpMarkDown": "Json file containing e2e results"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "SpotCheckPullRequest.js"
+        }
+    }
+}

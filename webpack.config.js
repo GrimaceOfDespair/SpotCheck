@@ -1,39 +1,64 @@
 const path = require("path");
-const fs = require("fs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 // Webpack entry points. Mapping from resulting bundle name to the source file entry.
-const entries = {};
-
-// Loop through subfolders in the "src" folder and add an entry for each one
 const codeDir = path.join(__dirname, "src");
-fs.readdirSync(codeDir).filter(dir => {
-    switch (dir) {
-        case '__mocks__':
-        case 'Tests':
-            return;
-    }
 
-    if (fs.statSync(path.join(codeDir, dir)).isDirectory()) {
-        entries[dir] = "./" + path.relative(process.cwd(), path.join(codeDir, dir, dir));
-    }
-});
+[webEntry, taskEntry] = [
+    ["Config", "SpotCheck"],
+    ["SpotCheckPullRequest"]
+].map((components) => components
+    .reduce((agg, component) => {
+        agg[component] = `./src/${component}/${component}`;
+        return agg;
+    },
+        {}));
 
-module.exports = (env, argv) => ({
-    entry: entries,
+const common = (clean, alias) => ({
     output: {
         filename: "[name]/[name].js",
         publicPath: "/dist/",
+        clean,
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"],
-        alias: {
-            "azure-devops-extension-sdk": path.resolve("node_modules/azure-devops-extension-sdk")
-        },
+        alias,
     },
     stats: {
         warnings: false
+    }
+});
+
+const taskConfig = (env, argv) => ({
+    ...common(false, {
+        "azure-pipelines-task-lib": path.resolve("src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib"),
+    }),
+    entry: taskEntry,
+    target: 'node',
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                loader: "ts-loader"
+            },
+        ]
     },
+    plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: "**/task.json", context: "src" },
+                { from: "lib.json", context: "src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib", to: "SpotCheckPullRequest" },
+                { from: "Strings/**/*.resjson", context: "src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib", to: "SpotCheckPullRequest" },
+            ]
+        })
+    ],
+});
+
+const webConfig = (env, argv) => ({
+    ...common(true, {
+        "azure-devops-extension-sdk": path.resolve("node_modules/azure-devops-extension-sdk"),
+    }),
+    entry: webEntry, 
     module: {
         rules: [
             {
@@ -62,17 +87,22 @@ module.exports = (env, argv) => ({
         new CopyWebpackPlugin({
             patterns: [
                 { from: "**/*.html", context: "src" },
-                { from: "*.*", context: "screenshots" }
+                { from: "**/task.json", context: "src" },
             ]
         })
     ],
     ...(env.WEBPACK_SERVE
         ? {
-            devtool: 'inline-source-map',
+            devtool: 'eval-cheap-source-map',
             devServer: {
                 server: 'https',
                 port: 3000
             }
         }
-        : {})
+        : {}),
 });
+
+module.exports = (env, argv) => (
+    env.WEBPACK_SERVE ?
+        [ webConfig(env, argv) ] :
+        [ taskConfig(env, argv), webConfig(env, argv) ]);
