@@ -9,7 +9,8 @@ SpotCheck runs on Azure DevOps pipelines. When used in PR guards, it enables com
 
 <img width="1319" alt="image" src="https://github.com/user-attachments/assets/294a3d03-026e-437d-9be1-493ee3386746" />
 
-<img width="608" alt="image" src="https://github.com/user-attachments/assets/4db38604-7a49-401d-a80a-8a84507d39c5" />
+<img width="921" alt="image" src="https://github.com/user-attachments/assets/13a39875-42a5-4d77-afee-b5756b981bf2" />
+
 
 # Resources
 - https://stackoverflow.com/questions/50396510/make-release-def-context-menu-item-conditionally-invisible
