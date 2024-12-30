@@ -8,8 +8,8 @@
     "category": "Utility",
     "author": "Igor Kalders",
     "version": {
-        "Major": 0,
-        "Minor": 1,
+        "Major": 4,
+        "Minor": 5,
         "Patch": 0
     },
     "instanceNameFormat": "Analyze $(reportFile)",
@@ -24,7 +24,7 @@
         }
     ],
     "execution": {
-        "Node": {
+        "Node16": {
             "target": "SpotCheckPullRequest.js"
         }
     }

@@ -7,11 +7,18 @@
   "license": "MIT",
   "dependencies": {
     "azure-devops-node-api": "^14.0.1",
-    "azure-pipelines-task-lib": "^4.13.0"
+    "azure-pipelines-task-lib": "^4.13.0",
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0",
+    "sax": "^1.4.1",
+    "saxpath": "^0.6.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/pngjs": "^6.0.5",
     "@types/q": "^1.5.8",
+    "@types/sax": "^1.2.7",
     "sync-request": "^6.1.0"
   }
 }
