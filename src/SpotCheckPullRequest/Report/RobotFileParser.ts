@@ -12,11 +12,13 @@ import { RobotReportRecorder } from "./RobotReportRecorder";
 
 export class RobotFileParser {
 
-    ctx: ReportContext;
-    images: ImageProcessor = new ImageProcessor();
+    defaultThreshold: number = .05;
+    
+    private _context: ReportContext;
+    private _images: ImageProcessor = new ImageProcessor();
 
     constructor(reportFile: string, baseDir?: string) {
-        this.ctx = new ReportContext(reportFile, baseDir ?? path.dirname(reportFile));
+        this._context = new ReportContext(reportFile, baseDir ?? path.dirname(reportFile));
     }
 
     async parseReport(imageFolder: string): Promise<IDiffTestRun> {
@@ -53,7 +55,7 @@ export class RobotFileParser {
 
     private async readTestSuites() {
 
-        const reportStream = createReadStream(this.ctx.reportFile);
+        const reportStream = createReadStream(this._context.reportFile);
         const saxParser = sax.createStream(true);
 
         const testContext = {
@@ -77,20 +79,23 @@ export class RobotFileParser {
 
         const imageNameOnDisk = decodeURIComponent(imageName);
         const imageFolderOnDisk = decodeURIComponent(imageFolder);
-        const relativeFolder = this.ctx.baseDir
-            ? imageFolderOnDisk.replace(new RegExp('^' + this.ctx.baseDir + '/?'), '')
+        const relativeFolder = this._context.baseDir
+            ? imageFolderOnDisk.replace(new RegExp('^' + this._context.baseDir + '/?'), '')
             : imageFolderOnDisk;
     
         const [baselinePath, comparisonPath, diffPath] =
             ['baseline', '', 'diff'].map(version =>
             ({
                 relative: [relativeFolder, version, imageNameOnDisk].filter(Boolean).join('/'),
-                absolute: [this.ctx.basePath, imageFolderOnDisk, version, imageNameOnDisk].filter(Boolean).join('/')
+                absolute: [this._context.basePath, imageFolderOnDisk, version, imageNameOnDisk].filter(Boolean).join('/')
             }));
     
-        const failureThreshold = parseFloat(imageThreshold);
+        let failureThreshold = parseFloat(imageThreshold);
+        if (isNaN(failureThreshold)) {
+            failureThreshold = this.defaultThreshold;
+        }
     
-        const { percentage, testFailed } = await this.images.compareImage(
+        const { percentage, testFailed } = await this._images.compareImage(
             baselinePath.absolute,
             comparisonPath.absolute,
             diffPath.absolute,
