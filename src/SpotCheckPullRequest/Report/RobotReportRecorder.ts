@@ -1,5 +1,5 @@
 import { Tag } from "sax";
-import { ITestContext } from "../TestContext";
+import { ITestContext, TestStatus } from "../TestContext";
 import { IRobotSuites, IRobotTest } from "./RobotReport";
 import { SaxParserRecorder, State } from "./SaxParserRecorder";
 
@@ -7,9 +7,17 @@ export class RobotReportRecorder implements SaxParserRecorder {
 
     tests: IRobotTest[] = [];
     isKeyword: boolean = false;
+    isArg: boolean = false;
+    isStatus: boolean = false;
     captureScreenshot: string = '';
     plainText: boolean = false;
-    testContext: ITestContext = { suiteStack: [], keyword: '', test: '' };
+    testContext: ITestContext = {
+        suiteStack: [],
+        args: [],
+        source: '',
+        test: '',
+        status: 'NOT RUN',
+    };
 
     getGroupedSuites(): IRobotSuites {
         return this.tests.reduce((suites, test) => {
@@ -18,40 +26,47 @@ export class RobotReportRecorder implements SaxParserRecorder {
         }, <IRobotSuites>{});
     }
 
-    start(state: State) {
-        console.log('start');
+    normalize(screenshot: string) {
+        const normalizedScreenshot = screenshot
+            .replace(/ /g, '_')
+            .replace(/[^-\w.]/g, '');
+
+        switch (normalizedScreenshot) {
+            case '':
+            case '.':
+            case '..':
+                throw new Error(`Cannot create file name from ${screenshot} as it results in ${normalizedScreenshot}`);
+
+            default:
+                return normalizedScreenshot;
+        }
     }
 
-    stop(state: State) {
-        console.log('stop ' + this.captureScreenshot);
+    start(_: State) {
+    }
 
-        if (!this.captureScreenshot) {
-            return;
-        }
-
-        const imageMatch = this.captureScreenshot
-            .match(/Capturing screenshot (.*[.]png) with threshold (.*) in folder (.*)/);
-
-        if (!imageMatch) {
+    stop(_: State) {
+        if (!this.testContext.test || this.testContext.status != 'PASS') {
             return;
         }
 
         const { suiteStack, test, source } = this.testContext;
-        const [, imageName, imageThreshold, imageFolder] = imageMatch;
+        const [ snapshot, imageThreshold ] = this.testContext.args;
+        const suite = suiteStack[suiteStack.length-1];
+        const imageName = this.normalize([...suiteStack, snapshot, 'png'].join('.'));
 
         this.tests.push({
-            suite: suiteStack[suiteStack.length-1],
+            suite,
             test,
-            source: source ?? '',
+            source,
             imageName,
             imageThreshold,
-            imageFolder,
         });
+
+        this.testContext.args = [];
     }
 
     onOpenTag(node: Tag) {
-        //console.log('open ' + node.name);
-
         switch (node.name)
         {
             case 'suite':
@@ -65,10 +80,15 @@ export class RobotReportRecorder implements SaxParserRecorder {
 
             case 'kw':
                 this.isKeyword = true;
+                this.testContext.args = [];
                 break;
 
-            case 'msg':
-                this.plainText = !node.attributes['html'];
+            case 'arg':
+                this.isArg = true;
+                break;
+
+            case 'status':
+                this.testContext.status = <TestStatus>node.attributes['status'];
                 break;
         }
     }
@@ -80,30 +100,23 @@ export class RobotReportRecorder implements SaxParserRecorder {
                 this.testContext.suiteStack.pop();
                 break;
 
-            case 'test':
-                this.testContext.test = '';
-                break;
-
             case 'kw':
                 this.isKeyword = false;
+                break;
+
+            case 'arg':
+                this.isArg = false;
                 break;
         }
     }
 
     onText(text: string) {
-        // console.log('text ' + text);
-
-        if (this.isKeyword && this.testContext.test) {
-            this.captureScreenshot = this.plainText ? text : '';
+        if (this.isKeyword && this.isArg) {
+            this.testContext.args.push(text);
         }
     }
 
     onCDATA(cdata: string) {
-        //console.log('cdata ' + text);
-
-        if (this.isKeyword) {
-            this.captureScreenshot = this.plainText ? cdata : '';
-        }
     }
 
     onOpenCDATA(tag: string) {

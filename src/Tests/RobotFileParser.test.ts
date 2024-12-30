@@ -2,17 +2,55 @@ import path from 'node:path';
 import { RobotFileParser } from '../SpotCheckPullRequest/Report/RobotFileParser';
 
 describe('RobotFileParser', () => {
-  test('Parse robot file with screenshots', async () => {
+  test('Parse trimmed robot file with screenshot in 1 test', async () => {
+
+    const parser = new RobotFileParser('../Tests/reports/output-trimmed.xml');
+    const robotReport = await parser.parseReport('screenshots');
+
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test1, test2] = robotReport.suites[0].tests;
+
+    expect(test1.name).toBe('Create_List');
+    expect(test1.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+    expect(test1.failureThreshold).toBe(.1);
+
+    expect(test2.name).toBe('Create_List');
+    expect(test2.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png');
+    expect(test2.failureThreshold).toBeNaN;
+
+  });
+
+  test('Parse robot file with screenshot in 1 test', async () => {
 
     const parser = new RobotFileParser('../Tests/reports/output.xml');
-    const robotReport = await parser.parseReport();
+    const robotReport = await parser.parseReport('screenshots');
 
     expect(robotReport.suites.length).toBe(1);
 
     const [test] = robotReport.suites[0].tests;
 
     expect(test.name).toBe('Create_List');
-    expect(test.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments_Lists_Dashboard.png');
+    expect(test.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+
+  });
+
+  test('Parse robot file with screenshots in 2 tests', async () => {
+
+    const parser = new RobotFileParser('../Tests/reports/output-two.xml');
+    const robotReport = await parser.parseReport('screenshots');
+
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test1, test2] = robotReport.suites[0].tests;
+
+    expect(test1.name).toBe('Create_List');
+    expect(test1.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+    expect(test1.failureThreshold).toBe(.1);
+
+    expect(test2.name).toBe('Create_Other_List');
+    expect(test2.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Other_Dashboard.png');
+    expect(test2.failureThreshold).toBe(.05);
 
   });
 })

@@ -10,7 +10,6 @@ export interface IRobotTest {
     source: string;
     imageName: string;
     imageThreshold: string;
-    imageFolder: string;
 }
 
 export interface IRobotSuites {

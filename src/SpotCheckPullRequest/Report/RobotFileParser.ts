@@ -19,14 +19,14 @@ export class RobotFileParser {
         this.ctx = new ReportContext(reportFile, baseDir ?? path.dirname(reportFile));
     }
 
-    async parseReport(): Promise<IDiffTestRun> {
+    async parseReport(imageFolder: string): Promise<IDiffTestRun> {
 
         const testSuites = await this.readTestSuites();
         
-        return await this.parseScreenshots(testSuites);
+        return await this.parseScreenshots(testSuites, imageFolder);
     }
 
-    private async parseScreenshots(groupedSuites: IRobotSuites): Promise<IDiffTestRun> {
+    private async parseScreenshots(groupedSuites: IRobotSuites, imageFolder: string): Promise<IDiffTestRun> {
 
         const suites: IDiffSuite[] = await Promise.all(Object.entries(groupedSuites)
             .map(async ([suite, tests]) => ({
@@ -36,7 +36,7 @@ export class RobotFileParser {
                     name: test.test,
                     specPath: test.source,
                     specFilename: path.basename(test.source),
-                    ...await this.getScreenshot(test.imageName, test.imageThreshold, test.imageFolder)
+                    ...await this.getScreenshot(test.imageName, test.imageThreshold, imageFolder)
                 })))
             })));
 
@@ -63,12 +63,10 @@ export class RobotFileParser {
         };
 
         const suiteRecorder = new RobotReportRecorder();
-        const saxPath = new SaXPath(saxParser, `//test//kw[@name="Compare Snapshot"]/msg`, suiteRecorder);
+        const saxPath = new SaXPath(saxParser, `//test//kw[@name="Compare Snapshot"]`, suiteRecorder);
         reportStream.pipe(saxParser);
 
         await once(saxPath, 'end');
-
-        console.log('tests', suiteRecorder.tests);
 
         let groupedSuites = suiteRecorder.getGroupedSuites();
         return groupedSuites;
