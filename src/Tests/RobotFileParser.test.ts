@@ -4,9 +4,13 @@ import { RobotFileParser } from '../SpotCheckPullRequest/Report/RobotFileParser'
 describe('RobotFileParser', () => {
   test('Parse trimmed robot file with screenshot in 1 test', async () => {
 
+    // Arrange
     const parser = new RobotFileParser('../Tests/reports/output-trimmed.xml');
-    const robotReport = await parser.parseReport('screenshots');
 
+    // Act
+    const robotReport = await parser.createDiffReport('screenshots');
+
+    // Assert
     expect(robotReport.suites.length).toBe(1);
 
     const [test1, test2] = robotReport.suites[0].tests;
@@ -23,9 +27,13 @@ describe('RobotFileParser', () => {
 
   test('Parse robot file with screenshot in 1 test', async () => {
 
+    // Arrange
     const parser = new RobotFileParser('../Tests/reports/output.xml');
-    const robotReport = await parser.parseReport('screenshots');
 
+    // Act
+    const robotReport = await parser.createDiffReport('screenshots');
+
+    // Assert
     expect(robotReport.suites.length).toBe(1);
 
     const [test] = robotReport.suites[0].tests;
@@ -37,9 +45,13 @@ describe('RobotFileParser', () => {
 
   test('Parse robot file with screenshots in 2 tests', async () => {
 
+    // Arrange
     const parser = new RobotFileParser('../Tests/reports/output-two.xml');
-    const robotReport = await parser.parseReport('screenshots');
 
+    // Act
+    const robotReport = await parser.createDiffReport('screenshots');
+
+    // Assert
     expect(robotReport.suites.length).toBe(1);
 
     const [test1, test2] = robotReport.suites[0].tests;
