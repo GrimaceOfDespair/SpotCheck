@@ -6,14 +6,14 @@ const { SaXPath } = require('saxpath');
 import { once } from 'events';
 import { IRobotSuite, IRobotTest, IRobotSuites } from "./RobotReport";
 import { ReportContext } from "../ReportContext";
-import { IDiffSuite, IDiffTest, IDiffTestRun } from "./DiffReport";
+import { IDiffSuite, IDiffTest, IDiffTestReport } from "./DiffReport";
 import { ImageProcessor } from "../ImageProcessor";
 import { RobotReportRecorder } from "./RobotReportRecorder";
 
 export class RobotFileParser {
 
     defaultThreshold: number = .05;
-    
+
     private _context: ReportContext;
     private _images: ImageProcessor = new ImageProcessor();
 
@@ -21,14 +21,14 @@ export class RobotFileParser {
         this._context = new ReportContext(reportFile, baseDir ?? path.dirname(reportFile));
     }
 
-    async parseReport(imageFolder: string): Promise<IDiffTestRun> {
+    async createDiffReport(imageFolder: string): Promise<IDiffTestReport> {
 
         const testSuites = await this.readTestSuites();
         
         return await this.parseScreenshots(testSuites, imageFolder);
     }
 
-    private async parseScreenshots(groupedSuites: IRobotSuites, imageFolder: string): Promise<IDiffTestRun> {
+    private async parseScreenshots(groupedSuites: IRobotSuites, imageFolder: string): Promise<IDiffTestReport> {
 
         const suites: IDiffSuite[] = await Promise.all(Object.entries(groupedSuites)
             .map(async ([suite, tests]) => ({

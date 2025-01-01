@@ -1,4 +1,4 @@
-export interface IDiffTestRun {
+export interface IDiffTestReport {
     total: number,
     totalPassed: number,
     totalFailed: number,
