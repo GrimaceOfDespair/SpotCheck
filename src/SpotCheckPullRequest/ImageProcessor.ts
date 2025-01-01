@@ -5,10 +5,16 @@ import Pixelmatch from 'pixelmatch';
 
 export class ImageProcessor {
 
+    private _baseDir: string;
+
+    constructor(baseDir?: string) {
+        this._baseDir = baseDir ?? __dirname;
+    }
+
     normalize(file: string) {
         return path.isAbsolute(file)
             ? file
-            : path.join(__dirname, '/', file);
+            : path.join(this._baseDir, '/', file);
     }
 
     async parseImage(image: string): Promise<PNG> {

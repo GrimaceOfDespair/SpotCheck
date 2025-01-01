@@ -15,4 +15,14 @@ export class Temp {
 
         return folder;
     }
+
+    static async createMirror(source: string): Promise<string> {
+
+        const sourceFolder = path.join(__dirname, source);
+        const targetFolder = await Temp.createFolder();
+
+        await fs.promises.cp(sourceFolder, targetFolder, { recursive: true });
+
+        return targetFolder;
+    }
 }

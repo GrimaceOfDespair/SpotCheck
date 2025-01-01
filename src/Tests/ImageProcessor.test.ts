@@ -1,14 +1,23 @@
 import { ImageProcessor } from "../SpotCheckPullRequest/ImageProcessor";
 import path from 'node:path';
+import fs from 'node:fs';
+import { Temp } from "../SpotCheckPullRequest/Temp";
 
 describe('ImageProcessor', () => {
+
+  let imageBase: string = '';
+
+  beforeAll(async () => {
+    imageBase = await Temp.createMirror('../Tests/images');
+  });
+  
   test('Load image by relative path', async () => {
     
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Act
-    const image = await processor.parseImage('../Tests/images/tux-8bit.png');
+    const image = await processor.parseImage('tux-8bit.png');
 
     // Assert
     expect(image.width).toBe(386);
@@ -18,10 +27,10 @@ describe('ImageProcessor', () => {
   test('Load image by absolute path', async () => {
 
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Act
-    const image = await processor.parseImage(path.join(__dirname, '/images/tux-8bit.png'));
+    const image = await processor.parseImage(path.join(__dirname, 'images/tux-8bit.png'));
 
     // Assert
     expect(image.width).toBe(386);
@@ -31,10 +40,10 @@ describe('ImageProcessor', () => {
   test('Load 16-bit image', async () => {
 
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Act
-    const image = await processor.parseImage('../Tests/images/tux-16bit.png');
+    const image = await processor.parseImage('tux-16bit.png');
 
     // Assert
     expect(image.width).toBe(386);
@@ -44,13 +53,13 @@ describe('ImageProcessor', () => {
   test('Compare 8-bit and 16-bit image', async () => {
 
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Act
     const { percentage, testFailed } = await processor.compareImage(
-        '../Tests/images/tux-8bit.png',
-        '../Tests/images/tux-16bit.png',
-        '../Tests/images/tux-diff.png',
+        'tux-8bit.png',
+        'tux-16bit.png',
+        'tux-diff.png',
         0);
 
     // Assert
@@ -61,13 +70,13 @@ describe('ImageProcessor', () => {
   test('Compare different image adhering threshold', async () => {
 
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Act
     const { percentage, testFailed } = await processor.compareImage(
-        '../Tests/images/tux-16bit.png',
-        '../Tests/images/tux-16bit-eye.png',
-        '../Tests/images/tux-16bit-eye-diff.png',
+        'tux-16bit.png',
+        'tux-16bit-eye.png',
+        'tux-16bit-eye-diff.png',
         .2);
 
     // Assert
@@ -78,15 +87,15 @@ describe('ImageProcessor', () => {
   test('Compare different image exceeding threshold', async () => {
 
     // Arrange
-    const processor = new ImageProcessor();
+    const processor = new ImageProcessor(imageBase);
 
     // Adt
     const { percentage, testFailed } = await processor.compareImage(
-        '../Tests/images/tux-16bit.png',
-        '../Tests/images/tux-16bit-eye.png',
-        '../Tests/images/tux-16bit-eye-diff.png',
+        'tux-16bit.png',
+        'tux-16bit-eye.png',
+        'tux-16bit-eye-diff.png',
         .1);
-        
+
     // Assert
     expect(testFailed).toBe(true);
     expect(percentage).toBeGreaterThanOrEqual(.1);
