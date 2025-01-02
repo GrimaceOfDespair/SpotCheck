@@ -1,9 +1,26 @@
+import path from 'node:path';
+
+const mockData = {
+    buildArtifacts: <BuildArtifact[]>[{
+        id: 10,
+        name: 'report_1.zip',
+        resource: {
+            downloadUrl: path.join(__dirname, '../../Tests/build/report_1.zip'),
+            data: 'container/a',
+        }
+    }, {
+        id: 11,
+        name: 'report_2.zip',
+        resource: {
+            downloadUrl: path.join(__dirname, '../../Tests/build/report_2.zip'),
+            data: 'container/b',
+        }
+    }]
+}
 export class BuildRestClient {
-    getArtifacts(project: string, buildId: number): Promise<BuildArtifact[]>
+    async getArtifacts(project: string, buildId: number): Promise<BuildArtifact[]>
     {
-        return new Promise(() => {
-            return [];
-        });
+        return mockData.buildArtifacts;
     }
 }
 

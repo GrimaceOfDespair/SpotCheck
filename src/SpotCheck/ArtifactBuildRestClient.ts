@@ -16,17 +16,16 @@ async function getArtifactContentZip(downloadUrl: string): Promise<ArrayBuffer> 
     const acceptType = "application/zip";
     const acceptHeaderValue = `${acceptType};excludeUrls=true;enumsAsNumbers=true;msDateFormat=true;noArrayWrap=true`;
     
-    const headers = new Headers();
-    headers.append("Accept", acceptHeaderValue);
-    headers.append("Authorization", "Bearer " + accessToken);
-    headers.append("Content-Type", "application/zip");
-    headers.append("X-VSS-ReauthenticationAction", "Suppress");
-
     const options: RequestInit = {
         method: "GET",
         mode: "cors",
         credentials: "same-origin",
-        headers: headers
+        headers: new Headers({
+			"Accept": acceptHeaderValue,
+			"Authorization": "Bearer " + accessToken,
+			"Content-Type": "application/zip",
+			"X-VSS-ReauthenticationAction": "Suppress",
+		})
     };
     const response = await fetch(downloadUrl, options);
 
@@ -37,7 +36,7 @@ async function getArtifactContentZip(downloadUrl: string): Promise<ArrayBuffer> 
         return new ArrayBuffer(0);
     }
 
-    return response.arrayBuffer();
+    return await response.arrayBuffer();
 }
 
 export async function getArtifactsFileEntries(
@@ -50,6 +49,10 @@ export async function getArtifactsFileEntries(
 
 	let artifacts = await buildClient.getArtifacts(project, buildId);
 
+	// If the test pattern is configured with a question mark, it's considered
+	// to be dynamic. This typically is the case when the build is setup to
+	// support rerunning failing tests and the test artifact contains a
+	// sequence number per attempted test run, e.g. report_2.zip
 	const regexPattern = artifactPattern.replace('?', '(?<index>[0-9]+)');
 	if (regexPattern != artifactPattern) {
 		const regex = new RegExp(regexPattern);
@@ -67,7 +70,7 @@ export async function getArtifactsFileEntries(
 	}
 
 	const requestUrl = artifact.resource.downloadUrl;
-	const arrayBuffer = await getArtifactContentZip(requestUrl)
+	const arrayBuffer = await getArtifactContentZip(requestUrl);
 
 	if (arrayBuffer) {
 

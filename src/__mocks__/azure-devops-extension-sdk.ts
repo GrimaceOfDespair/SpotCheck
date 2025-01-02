@@ -1,6 +1,22 @@
 import { CommonServiceIds } from "azure-devops-extension-api/Common";
-import { BuildServiceIds } from "azure-devops-extension-api/Build";
+import { BuildServiceIds, IBuildPageData } from "azure-devops-extension-api/Build";
+import { IBuildConfiguration } from "../Config/Models";
 
+const mockData = {
+    buildPageData: <IBuildPageData>{
+        build: {
+            id: 2,
+        },
+        definition: {
+            id: 1,
+        }
+    },
+    buildConfigurations: <IBuildConfiguration[]>[{
+        buildDefinitionId: 1,
+        gitPath: '/path/to/git',
+        artifact: 'report_?.zip',
+    }]
+}
 
 export function init(): Promise<void> {
     return new Promise((resolve, reject) => resolve());
@@ -13,10 +29,16 @@ export function ready(): Promise<void> {
 export const mockOpenMessageDialog = jest.fn();
 export const mockCloseBanner = jest.fn();
 export const mockGetProject = jest.fn();
-export const mockGetBuildPageData = jest.fn();
+
 export const mockGetExtensionDataManager = jest.fn(dataManager => ({
-    getValue() {
-        return [];
+    getValue(id: string) {
+        switch (id) {
+            case 'buildConfigurations':
+                return mockData.buildConfigurations;
+
+            default:
+                return {};
+        }
     }
 }));
 
@@ -52,7 +74,7 @@ export function getService(contributionId: string) {
     
         case BuildServiceIds.BuildPageDataService:
             return {
-                getBuildPageData: mockGetBuildPageData,
+                getBuildPageData: () => mockData.buildPageData,
             };
     }
 }

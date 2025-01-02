@@ -20,7 +20,9 @@ export const downloadArtifacts = async (artifactPattern: string, isBinary: boole
     const buildId = buildPageData?.build?.id ?? 0;
 
     const buildClient = getClient(BuildRestClient);
-    return await getArtifactsFileEntries(buildClient, projectName, buildId, artifactPattern, isBinary);
+    const fileEntries = await getArtifactsFileEntries(buildClient, projectName, buildId, artifactPattern, isBinary);
+
+    return fileEntries;
 }
 
 export const downloadArtifact = async (artifactName: string, fileName: string, isBinary: boolean = false) => {
