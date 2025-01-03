@@ -34,12 +34,13 @@ export class RobotFileParser {
             .map(async ([suite, tests]) => ({
                 name: suite,
                 path: tests[0].source,
-                tests: await Promise.all(tests.map(async (test) => ({
-                    name: test.test,
-                    specPath: test.source,
-                    specFilename: path.basename(test.source),
-                    ...await this.getScreenshot(test.imageName, test.imageThreshold, imageFolder)
-                })))
+                tests: await Promise.all(
+                    tests.map(async ({ test: name, source: specPath, imageName, imageThreshold }) => ({
+                        name,
+                        specPath,
+                        specFilename: path.basename(specPath),
+                        ...await this.getScreenshot(imageName, imageThreshold, imageFolder)
+                    })))
             })));
 
         const allTests = suites.reduce((acc, suite) => acc.concat(suite.tests), <IDiffTest[]>[]);
@@ -94,12 +95,16 @@ export class RobotFileParser {
         if (isNaN(failureThreshold)) {
             failureThreshold = this.defaultThreshold;
         }
+
+        console.log(`Comparing '${baselinePath.absolute}' with '${comparisonPath.absolute}' with threshold ${Math.round(failureThreshold * 100)}% and writing output to ${diffPath.absolute}`);
     
         const { percentage, testFailed } = await this._images.compareImage(
             baselinePath.absolute,
             comparisonPath.absolute,
             diffPath.absolute,
             failureThreshold);
+
+        console.log(`${testFailed ? 'Failed' : 'Passed'} with ${Math.round(percentage * 100)}%`);
     
         return {
             status: testFailed ? 'fail' : 'pass',
