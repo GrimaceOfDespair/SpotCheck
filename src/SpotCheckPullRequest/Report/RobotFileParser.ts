@@ -17,18 +17,20 @@ export class RobotFileParser {
     private _context: ReportContext;
     private _images: ImageProcessor = new ImageProcessor();
 
-    constructor(reportFile: string, baseDir?: string) {
-        this._context = new ReportContext(reportFile, baseDir ?? path.dirname(reportFile));
+    constructor(reportFile: string, baseDir?: string, screenshotFolder?: string) {
+        this._context = new ReportContext(reportFile,
+            baseDir ?? path.dirname(reportFile),
+            screenshotFolder ?? 'screenshots');
     }
 
     async createDiffReport(imageFolder: string): Promise<IDiffTestReport> {
 
         const testSuites = await this.readTestSuites();
         
-        return await this.parseScreenshots(testSuites, imageFolder);
+        return await this.parseScreenshots(testSuites);
     }
 
-    private async parseScreenshots(groupedSuites: IRobotSuites, imageFolder: string): Promise<IDiffTestReport> {
+    private async parseScreenshots(groupedSuites: IRobotSuites): Promise<IDiffTestReport> {
 
         const suites: IDiffSuite[] = await Promise.all(Object.entries(groupedSuites)
             .map(async ([suite, tests]) => ({
@@ -39,7 +41,7 @@ export class RobotFileParser {
                         name,
                         specPath,
                         specFilename: path.basename(specPath),
-                        ...await this.getScreenshot(imageName, imageThreshold, imageFolder)
+                        ...await this.getScreenshot(imageName, imageThreshold)
                     })))
             })));
 
@@ -75,21 +77,20 @@ export class RobotFileParser {
         return groupedSuites;
     }
 
-    async getScreenshot(imageName: string, imageThreshold: string, imageFolder: string):
+    async getScreenshot(imageName: string, imageThreshold: string):
         Promise<Omit<IDiffTest, "name" | "specPath" | "specFilename">> {
 
         const imageNameOnDisk = decodeURIComponent(imageName);
-        const imageFolderOnDisk = decodeURIComponent(imageFolder);
-        const relativeFolder = this._context.baseDir
-            ? imageFolderOnDisk.replace(new RegExp('^' + this._context.baseDir + '/?'), '')
-            : imageFolderOnDisk;
     
         const [baselinePath, comparisonPath, diffPath] =
             ['baseline', '', 'diff'].map(version =>
-            ({
-                relative: [relativeFolder, version, imageNameOnDisk].filter(Boolean).join('/'),
-                absolute: [this._context.basePath, imageFolderOnDisk, version, imageNameOnDisk].filter(Boolean).join('/')
-            }));
+                ({
+                    relative: this._context.resolveRelative(version, imageNameOnDisk),
+                    absolute: this._context.resolveAbsolute(version, imageNameOnDisk),
+                    //relative: [relativeFolder, version, imageNameOnDisk].filter(Boolean).join('/'),
+                    //absolute: [this._context.basePath, imageFolderOnDisk, version, imageNameOnDisk].filter(Boolean).join('/')
+                })
+            );
     
         let failureThreshold = parseFloat(imageThreshold);
         if (isNaN(failureThreshold)) {
@@ -104,7 +105,7 @@ export class RobotFileParser {
             diffPath.absolute,
             failureThreshold);
 
-        console.log(`${testFailed ? 'Failed' : 'Passed'} with ${Math.round(percentage * 100)}%`);
+        console.log(`${testFailed ? 'Failed' : 'Passed'} with ${Math.round(percentage * 100)}% difference`);
     
         return {
             status: testFailed ? 'fail' : 'pass',

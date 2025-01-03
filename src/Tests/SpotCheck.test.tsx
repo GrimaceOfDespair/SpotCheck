@@ -46,4 +46,14 @@ describe('SpotCheckContent', () => {
         expect(await screen.findByText(/Listsandstaticsegments/i)).toBeInTheDocument();
     });
 
+    test('SpotCheckContent - load build', async () => {
+
+        render(<SpotCheckContent />);
+
+        await screen.findByText(/Listsandstaticsegments/i);
+
+        
+
+    });
+
 })

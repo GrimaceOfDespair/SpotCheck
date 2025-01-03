@@ -10,7 +10,7 @@ export class DiffReportCollector {
 
     constructor(reportName?: string, screenshots?: string) {
         this._reportName = reportName ?? 'diff-report.json';
-        this._screenshots = screenshots ?? 'screenshots';
+        this._screenshots = screenshots ?? '';
     }
 
     async collectReportFile(reportPath: string): Promise<string> {
@@ -29,7 +29,6 @@ export class DiffReportCollector {
 
     async collectReport(baseDir: string, report: IDiffTestReport): Promise<string> {
         const output = await Temp.createFolder();
-        const targetReport = path.join(output, baseDir);
 
         await this._collectScreenshots(baseDir, output, report);
 

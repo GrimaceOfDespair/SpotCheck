@@ -13,14 +13,20 @@ function throwExpression(errorMessage: string): never {
         const input: string = tl.getInput('input', true) ?? throwExpression(`specify a report file for "input"`);
         const mode = tl.getInput('mode', false) ?? 'robot';
         const baseDir = tl.getInput('baseDir', false) ?? path.dirname(input);
-        const screenshotFolder = tl.getInput('screenshots', false) ?? (path.dirname(input) + '/screenshots');
+        const screenshotFolder = tl.getInput('screenshots', false) ?? 'screenshots';
 
         const diffReportCollector = new DiffReportCollector();
+
+        console.log(`input: ${input}`);
 
         let output: string;
         switch (mode) {
             case 'robot':
-                const diffReport = await new RobotFileParser(input, baseDir)
+
+                console.log(`baseDir: ${baseDir}`);
+                console.log(`screenshotFolder: ${screenshotFolder}`);
+
+                const diffReport = await new RobotFileParser(input, baseDir, screenshotFolder)
                     .createDiffReport(screenshotFolder);
 
                 output = await diffReportCollector.collectReport(baseDir, diffReport);
