@@ -1,9 +1,26 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-// Webpack entry points. Mapping from resulting bundle name to the source file entry.
-const codeDir = path.join(__dirname, "src");
+class PatchAzureTaskLib {
+    apply (compiler) {
+      compiler.hooks.normalModuleFactory.tap('PatchAzureTaskLib', factory => {
+        factory.hooks.parser.for('javascript/auto').tap('PatchAzureTaskLib', (parser, options) => {
+          parser.hooks.call.for('require').tap('PatchAzureTaskLib', expression => {
+            // This is a SyncBailHook, so returning anything stops the parser, and nothing allows to continue
+            if (expression.arguments.length !== 1 || expression.arguments[0].type === 'Literal') {
+              return
+            }
 
+            // Leave dynamic import of task resources alone
+            if (expression.arguments[0].name == 'resourceFile') {
+              return true;
+            }
+          });
+        });
+      });
+    }
+  }
+  
 [webEntry, taskEntry] = [
     ["Config", "SpotCheck"],
     ["SpotCheckPullRequest"]
@@ -44,6 +61,7 @@ const taskConfig = (env, argv) => ({
         ]
     },
     plugins: [
+        new PatchAzureTaskLib(),
         new CopyWebpackPlugin({
             patterns: [
                 { from: "**/task.json", context: "src" },
