@@ -17,14 +17,14 @@ function throwExpression(errorMessage: string): never {
 
         const diffReportCollector = new DiffReportCollector();
 
-        console.log(`input: ${input}`);
+        console.info(`input: ${input}`);
 
         let output: string;
         switch (mode) {
             case 'robot':
 
-                console.log(`baseDir: ${baseDir}`);
-                console.log(`screenshotFolder: ${screenshotFolder}`);
+                console.info(`baseDir: ${baseDir}`);
+                console.info(`screenshotFolder: ${screenshotFolder}`);
 
                 const diffReport = await new RobotFileParser(input, baseDir, screenshotFolder)
                     .createDiffReport(screenshotFolder);

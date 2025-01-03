@@ -179,7 +179,7 @@ export const updateScreenshot = async(buildConfiguration: IBuildConfiguration, p
             }]
         });
     } catch (error) {
-        console.log('error', error);
+        console.error(error);
         const globalMessagesSvc = await SDK.getService<IGlobalMessagesService>(CommonServiceIds.GlobalMessagesService);
         globalMessagesSvc.addBanner({
             level: MessageBannerLevel.error,

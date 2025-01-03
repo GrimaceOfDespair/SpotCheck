@@ -97,7 +97,7 @@ export class RobotFileParser {
             failureThreshold = this.defaultThreshold;
         }
 
-        console.log(`Comparing '${baselinePath.absolute}' with '${comparisonPath.absolute}' with threshold ${Math.round(failureThreshold * 100)}% and writing output to ${diffPath.absolute}`);
+        console.info(`Comparing '${baselinePath.absolute}' with '${comparisonPath.absolute}' with threshold ${Math.round(failureThreshold * 100)}% and writing output to ${diffPath.absolute}`);
     
         const { percentage, testFailed } = await this._images.compareImage(
             baselinePath.absolute,
@@ -105,7 +105,11 @@ export class RobotFileParser {
             diffPath.absolute,
             failureThreshold);
 
-        console.log(`${testFailed ? 'Failed' : 'Passed'} with ${Math.round(percentage * 100)}% difference`);
+        if (testFailed) {
+            console.error(`Failed with ${Math.round(percentage * 100)}% difference`);
+        } else {
+            console.info(`Passed with ${Math.round(percentage * 100)}% difference`);
+        }
     
         return {
             status: testFailed ? 'fail' : 'pass',

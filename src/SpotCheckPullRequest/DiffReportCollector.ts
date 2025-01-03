@@ -16,6 +16,8 @@ export class DiffReportCollector {
     async collectReportFile(reportPath: string): Promise<string> {
         const output = await Temp.createFolder();
         const targetReport = path.join(output, this._reportName);
+
+        console.info(`Copy ${reportPath} -> ${targetReport}`);
         await fs.promises.copyFile(reportPath, targetReport);
 
         const reportData = await fs.promises.readFile(reportPath);
@@ -29,6 +31,10 @@ export class DiffReportCollector {
 
     async collectReport(baseDir: string, report: IDiffTestReport): Promise<string> {
         const output = await Temp.createFolder();
+        const targetReport = path.join(output, this._reportName);
+        
+        console.info(`Writing report to ${targetReport}`);
+        await fs.promises.writeFile(targetReport, JSON.stringify(report));
 
         await this._collectScreenshots(baseDir, output, report);
 
@@ -36,6 +42,9 @@ export class DiffReportCollector {
     }
 
     private async _collectScreenshots(source: string, target:string, report: IDiffTestReport) {
+
+        console.info(`Collect screenshots from ${source} into ${target}`);
+
         for (const test of report.suites.flatMap(s => s.tests)) {
             await this._copyImage(source, target, test.baselinePath);
             await this._copyImage(source, target, test.comparisonPath);
