@@ -85,11 +85,11 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
             return;
         }
 
-        const reportJson = artifacts.find(artifact => artifact.name == 'output.json');
+        const reportJson = artifacts.find(artifact => artifact.name == 'diff-report.json');
         if (!reportJson) {
             this.setState({
                 phase: 'load-build',
-                status: `No output.json found in build artifact "${artifactName}"`
+                status: `No diff-report.json found in build artifact "${artifactName}"`
             });
             return;
         }
