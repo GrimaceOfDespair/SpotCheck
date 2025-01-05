@@ -13,22 +13,6 @@ export class DiffReportCollector {
         this._screenshots = screenshots ?? '';
     }
 
-    async collectReportFile(reportPath: string): Promise<string> {
-        const output = await Temp.createFolder();
-        const targetReport = path.join(output, this._reportName);
-
-        console.info(`Copy ${reportPath} -> ${targetReport}`);
-        await fs.promises.copyFile(reportPath, targetReport);
-
-        const reportData = await fs.promises.readFile(reportPath);
-        const report = <IDiffTestReport>JSON.parse(reportData.toString());
-
-        const baseDir = path.dirname(reportPath);
-        await this._collectScreenshots(baseDir, output, report);
-
-        return output;
-    }
-
     async collectReport(baseDir: string, report: IDiffTestReport): Promise<string> {
         const output = await Temp.createFolder();
         const targetReport = path.join(output, this._reportName);
