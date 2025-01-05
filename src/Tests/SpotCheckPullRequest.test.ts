@@ -13,8 +13,7 @@ describe('SpotCheckPullRequest Suite', function () {
 
       await testRunner.runAsync();
 
-      console.error(testRunner.stderr);
-
       expect(testRunner.stderr).toBe('');
-  });
+      expect(testRunner.errorIssues).toEqual(['Input required: input']);
+  }, 30 * 1000);
 })

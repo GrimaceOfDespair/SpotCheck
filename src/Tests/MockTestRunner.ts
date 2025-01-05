@@ -90,7 +90,7 @@ export class MockTestRunner {
             this.nodePath = nodePath;
         }
         
-        let spawn = cp.spawnSync(nodePath, ['--loader=ts-node/esm', this._testPath]);
+        let spawn = cp.spawnSync(nodePath, ['--import=tsx', this._testPath]);
 
         // Clean environment
         Object.keys(process.env)
@@ -246,18 +246,16 @@ export class MockTestRunner {
         let nodeUrl: string = process.env['TASK_NODE_URL'] || 'https://nodejs.org/dist';
         nodeUrl = nodeUrl.replace(/\/$/, '');  // ensure there is no trailing slash on the base URL
         let downloadPath = '';
-        switch (this.getPlatform()) {
+        const { platform, arch } = this.getOsProfile();
+        switch (platform) {
             case 'darwin':
-                await this.downloadTarGz(nodeUrl + '/' + nodeVersion + '/node-' + nodeVersion + '-darwin-x64.tar.gz', downloadDestination);
-                downloadPath = path.join(downloadDestination, 'node-' + nodeVersion + '-darwin-x64', 'bin', 'node');
-                break;
             case 'linux':
-                await this.downloadTarGz(nodeUrl + '/' + nodeVersion + '/node-' + nodeVersion + '-linux-x64.tar.gz', downloadDestination);
-                downloadPath = path.join(downloadDestination, 'node-' + nodeVersion + '-linux-x64', 'bin', 'node');
+                await this.downloadTarGz(`${nodeUrl}/${nodeVersion}/node-${nodeVersion}-${platform}-${arch}.tar.gz`, downloadDestination);
+                downloadPath = path.join(downloadDestination, `node-${nodeVersion}-${platform}-${arch}`, 'bin', 'node');
                 break;
             case 'win32':
-                await this.downloadFile(nodeUrl + '/' + nodeVersion + '/win-x64/node.exe', downloadDestination, 'node.exe');
-                await this.downloadFile(nodeUrl + '/' + nodeVersion + '/win-x64/node.lib', downloadDestination, 'node.lib');
+                await this.downloadFile(`${nodeUrl}/${nodeVersion}/win-x64/node.exe`, downloadDestination, 'node.exe');
+                await this.downloadFile(`${nodeUrl}/${nodeVersion}/win-x64/node.lib`, downloadDestination, 'node.lib');
                 downloadPath = path.join(downloadDestination, 'node.exe')
         }
 
@@ -316,12 +314,11 @@ export class MockTestRunner {
     // Checks if node is installed at downloadDestination. If it is, returns a path to node.exe, otherwise returns null.
     private getPathToNodeExe(nodeVersion: string, downloadDestination: string): string {
         let exePath = '';
-        switch (this.getPlatform()) {
+        const { platform, arch } = this.getOsProfile();
+        switch (platform) {
             case 'darwin':
-                exePath = path.join(downloadDestination, 'node-' + nodeVersion + '-darwin-x64', 'bin', 'node');
-                break;
             case 'linux':
-                exePath = path.join(downloadDestination, 'node-' + nodeVersion + '-linux-x64', 'bin', 'node');
+                exePath = path.join(downloadDestination, `node-${nodeVersion}-${platform}-${arch}`, 'bin', 'node');
                 break;
             case 'win32':
                 exePath = path.join(downloadDestination, 'node.exe');
@@ -338,11 +335,29 @@ export class MockTestRunner {
         }
     }
 
-    private getPlatform(): string {
-        let platform: string = os.platform();
-        if (platform != 'darwin' && platform != 'linux' && platform != 'win32') {
-            throw new Error('Unexpected platform: ' + platform);
+    private getOsProfile() {
+
+        const platform: string = os.platform();
+        switch (platform) {
+            case 'darwin':
+            case 'linux':
+            case 'win32':
+                break;
+
+            default:
+                throw new Error('Unsupported platform: ' + platform);
         }
-        return platform;
+
+        const arch: string = os.arch();
+        switch (arch) {
+            case 'x64':
+            case 'arm64':
+                break;
+
+            default:
+                throw new Error('Unsupported architecture: ' + arch);
+        }
+
+        return { platform, arch };
     }
 }

@@ -25,5 +25,7 @@ jobs:
       working-directory: src/SpotCheck
     - run: npm ci
       working-directory: src/SpotCheckPullRequest
+    - run: npm ci
+      working-directory: src/Tests/task
     - run: npm run build
     - run: npm run publish-extension -- --auth-type pat -t ${{secrets.PUBLISH_PAT}}
