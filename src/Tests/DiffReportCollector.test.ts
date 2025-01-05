@@ -9,11 +9,11 @@ describe('DiffReportCollector', () => {
     test('Collect simple report from report with two screenshots', async () => {
 
         // Arrange
-        const report = <IDiffTestReport>require('./reports/output-trimmed.json');
+        const report = <IDiffTestReport>require('./reports/output-pass.json');
         const baseDir = path.join(__dirname, 'reports');
 
         // Act
-        const collectedReportFolder = await new DiffReportCollector('output-trimmed.json', 'screenshots')
+        const collectedReportFolder = await new DiffReportCollector('output-pass.json', 'screenshots')
             .collectReport(baseDir, report);
 
         // Assert
