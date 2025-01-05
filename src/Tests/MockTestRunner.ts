@@ -30,6 +30,7 @@ export class MockTestRunner {
     public succeeded = false;
     public errorIssues: string[] = [];
     public warningIssues: string[] = [];
+    public uploads: { artifactname: string, path: string }[] = [];
 
     public async LoadAsync(testPath?: string, taskJsonPath?: string): Promise<MockTestRunner> {
         return new Promise(async (resolve, reject) => {
@@ -72,6 +73,11 @@ export class MockTestRunner {
 
     public stdErrContained(message: string): boolean {
         return this.stderr.indexOf(message) > 0;
+    }
+
+    public isUploaded(artifactname: string): boolean {
+        return this.uploads.findIndex(({ artifactname: uploadedArtifactname }) =>
+            artifactname == uploadedArtifactname) > 0;
     }
 
     public async runAsync(nodeVersion?: number): Promise<void> {
@@ -130,6 +136,13 @@ export class MockTestRunner {
 
                 if (cmd.command === 'task.issue' && cmd.properties['type'] === 'warning') {
                     this.warningIssues.push(cmd.message.trim());
+                }
+
+                if (cmd.command === 'artifact.upload') {
+                    this.uploads.push({
+                        artifactname: cmd.properties['artifactname'],
+                        path: cmd.message.trim(),
+                    });
                 }
             }
             else if (cmi == 0 && line.length > COMMAND_LENGTH) {

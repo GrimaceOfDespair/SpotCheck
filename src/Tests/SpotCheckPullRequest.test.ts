@@ -20,10 +20,11 @@ describe('SpotCheckPullRequest Suite', function () {
 
       expect(testRunner.stderr).toBe('');
       expect(testRunner.errorIssues).toEqual(['Input required: input']);
+      expect(testRunner.warningIssues).toEqual([]);
 
   }, 30 * 1000);
 
-  test('Run with report', async () => {
+  test('Run without PullRequest', async () => {
 
     const testRunner = createTestRunner('NoPullRequest.ts');
 
@@ -33,6 +34,8 @@ describe('SpotCheckPullRequest Suite', function () {
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
+    expect(testRunner.isUploaded('screenshots'));
 
 }, 30 * 1000);
 })

@@ -1,5 +1,4 @@
 import * as azdev from 'azure-devops-node-api';
-import { JsonPatchDocument } from 'azure-devops-node-api/interfaces/common/VSSInterfaces';
 import { IDiffTest, IDiffTestReport } from './Report/DiffReport';
 import { CommentThreadStatus, CommentType } from 'azure-devops-node-api/interfaces/GitInterfaces';
 import { IssueAuditAction, IssueSource } from 'azure-pipelines-task-lib/internal';
