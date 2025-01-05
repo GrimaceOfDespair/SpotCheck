@@ -46,8 +46,63 @@ describe('SpotCheckPullRequest Suite', function () {
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([
+      "1 screenshot(s) not matching baseline (http://example.com/tfs/FakeTeam/_build/results?buildId=666&view=IgorKalders.spotcheck.spotcheck-build)",
+      "E2E report contains failures"
+    ]);
+    expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('Creating new thread')).toBe(true);
+
+  }, 30 * 1000);
+
+  test('Input failing report for PullRequest with existing thread', async () => {
+
+    const testRunner = createTestRunner('FailWithThread.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([
+      "1 screenshot(s) not matching baseline (http://example.com/tfs/FakeTeam/_build/results?buildId=666&view=IgorKalders.spotcheck.spotcheck-build)",
+      "E2E report contains failures"
+    ]);
+    expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('Adding comment to pull request')).toBe(true);
+
+  }, 30 * 1000);
+
+  test('Input passing report for PullRequest without thread', async () => {
+
+    const testRunner = createTestRunner('PassWithoutThread.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([]);
     expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('E2E report contains no failures')).toBe(true);
+
+  }, 30 * 1000);
+
+  test('Input passing report for PullRequest with existing thread', async () => {
+
+    const testRunner = createTestRunner('PassWithThread.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([]);
+    expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('Close pending comments on thread')).toBe(true);
 
   }, 30 * 1000);
 })

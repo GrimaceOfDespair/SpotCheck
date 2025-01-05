@@ -199,7 +199,12 @@ export class PullRequestHandler {
             return undefined;
         }
 
-        return parseInt(propertiesValue[`${this._extensionIdentifier}.ThreadId`]?.$value);
+        const threadIdNumber = parseInt(propertiesValue[`${this._extensionIdentifier}.ThreadId`]?.$value);
+        if (isNaN(threadIdNumber)) {
+            return undefined;
+        }
+
+        return threadIdNumber;
     }
 
     private createMessage(failedTests: IDiffTest[]) {

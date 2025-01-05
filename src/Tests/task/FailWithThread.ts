@@ -13,6 +13,6 @@ taskRunner.setInput('screenshotFolder', 'screenshots');
 taskRunner.registerMock('azure-pipelines-task-lib/toolrunner', MockToolRunner);
 taskRunner.registerMock('azure-devops-node-api', MockDevopsApi);
 
-MockDevopsApi.setPullRequest();
+MockDevopsApi.setPullRequest([]);
 
 taskRunner.run();

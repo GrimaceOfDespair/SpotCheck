@@ -1,0 +1,36 @@
+{
+  "total": 2,
+  "totalPassed": 0,
+  "totalFailed": 2,
+  "totalSuites": 1,
+  "suites": [
+    {
+      "name": "Listsandstaticsegments",
+      "path": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
+      "tests": [
+        {
+          "name": "Create_List",
+          "specPath": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
+          "specFilename": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
+          "status": "pass",
+          "percentage": 1,
+          "failureThreshold": 0.1,
+          "baselinePath": "baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
+          "comparisonPath": "Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
+          "diffPath": ""
+        },
+        {
+          "name": "Create_List",
+          "specPath": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
+          "specFilename": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
+          "status": "fail",
+          "percentage": 1,
+          "failureThreshold": 0.05,
+          "baselinePath": "baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
+          "comparisonPath": "Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
+          "diffPath": ""
+        }
+      ]
+    }
+  ]
+}
