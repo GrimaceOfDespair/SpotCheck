@@ -10,7 +10,7 @@ describe('SpotCheckPullRequest Suite', function () {
     const testPath: string = path.join(__dirname, 'task', test);
     const taskJsonPath: string = path.join(__dirname, '..', 'SpotCheckPullRequest', 'task.json');
     return new MockTestRunner(testPath, taskJsonPath);
-}
+  }
 
   test('Run without arguments', async () => {
 
@@ -20,6 +20,6 @@ describe('SpotCheckPullRequest Suite', function () {
 
       expect(testRunner.stderr).toBe('');
       expect(testRunner.errorIssues).toEqual(['Input required: input']);
-      
+
   }, 30 * 1000);
 })
