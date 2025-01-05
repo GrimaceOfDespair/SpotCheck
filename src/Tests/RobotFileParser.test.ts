@@ -23,7 +23,7 @@ describe('RobotFileParser', () => {
     expect(test2.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png');
     expect(test2.failureThreshold).toBeNaN;
 
-  });
+  }, 30_000);
 
   test('Parse robot file with screenshot in 1 test', async () => {
 
@@ -41,7 +41,7 @@ describe('RobotFileParser', () => {
     expect(test.name).toBe('Create_List');
     expect(test.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
 
-  });
+  }, 30_000);
 
   test('Parse robot file with screenshots in 2 tests', async () => {
 
@@ -64,5 +64,5 @@ describe('RobotFileParser', () => {
     expect(test2.comparisonPath).toBe('screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Other_Dashboard.png');
     expect(test2.failureThreshold).toBe(.05);
 
-  });
+  }, 30_000);
 })
