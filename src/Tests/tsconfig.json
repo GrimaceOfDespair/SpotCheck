@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+    "moduleResolution": "node",
+    "target": "es5",
+    "jsx": "react",
+    "types": ["react", "jest", "node"],
+    "esModuleInterop": true
+  }
+}
