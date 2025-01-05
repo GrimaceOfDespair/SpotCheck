@@ -23,7 +23,7 @@ export class RobotFileParser {
             screenshotFolder ?? 'screenshots');
     }
 
-    async createDiffReport(imageFolder: string): Promise<IDiffTestReport> {
+    async createDiffReport(): Promise<IDiffTestReport> {
 
         const testSuites = await this.readTestSuites();
         

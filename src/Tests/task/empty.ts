@@ -1,14 +1,7 @@
-
-import { TaskMockRunner } from 'azure-pipelines-task-lib/mock-run';
 import * as MockToolRunner from 'azure-pipelines-task-lib/mock-toolrunner';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { createMockRunner } from './runner';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const taskPath: string = path.join(__dirname, '..', '..', 'SpotCheckPullRequest', 'SpotCheckPullRequest.ts');
-
-const taskRunner = new TaskMockRunner(taskPath);
+const taskRunner = createMockRunner();
 
 taskRunner.registerMock('azure-pipelines-task-lib/toolrunner', MockToolRunner);
 

@@ -14,7 +14,7 @@ describe('SpotCheckPullRequest Suite', function () {
 
   test('Run without arguments', async () => {
 
-      const testRunner = createTestRunner('empty.ts');
+      const testRunner = createTestRunner('Empty.ts');
 
       await testRunner.runAsync();
 
@@ -22,4 +22,17 @@ describe('SpotCheckPullRequest Suite', function () {
       expect(testRunner.errorIssues).toEqual(['Input required: input']);
 
   }, 30 * 1000);
+
+  test('Run with report', async () => {
+
+    const testRunner = createTestRunner('NoPullRequest.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+
+}, 30 * 1000);
 })

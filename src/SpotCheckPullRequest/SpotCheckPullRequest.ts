@@ -1,11 +1,8 @@
 import tl = require('azure-pipelines-task-lib/task');
-import { ToolRunner } from 'azure-pipelines-task-lib/toolrunner';
 import { RobotFileParser } from './Report/RobotFileParser';
 import path from 'node:path';
 import fs from 'node:fs';
 import { DiffReportCollector } from './DiffReportCollector';
-import * as azdev from "azure-devops-node-api";
-import * as ba from "azure-devops-node-api/BuildApi";
 import { PullRequestHandler } from './PullRequestHandler';
 import { IDiffTestReport } from './Report/DiffReport';
 
@@ -23,24 +20,22 @@ function throwExpression(errorMessage: string): never {
             [ 'screenshotFolder', 'screenhots' ]
         ]
         .map(([ key, defaultValue, errorMessage ]) =>
-            tl.getInput('input', errorMessage != undefined)
-                ?? errorMessage == undefined
+            tl.getInput(key, errorMessage !== undefined)
+                ?? (errorMessage !== undefined
                     ? throwExpression(errorMessage)
-                    : defaultValue);
+                    : defaultValue));
 
         const diffReportCollector = new DiffReportCollector();
 
-        console.info(`input: ${input}`);
-        console.info(`baseDir: ${baseDir}`);
+        tl.debug(`input: ${input}`);
+        tl.debug(`baseDir: ${baseDir}`);
 
         let diffReport: IDiffTestReport;
         switch (mode) {
             case 'robot':
 
-                console.info(`screenshotFolder: ${screenshotFolder}`);
-
                 diffReport = await new RobotFileParser(input, baseDir, screenshotFolder)
-                    .createDiffReport(screenshotFolder);
+                    .createDiffReport();
 
                 break;
 
@@ -54,7 +49,8 @@ function throwExpression(errorMessage: string): never {
                 throw new Error(`"mode" should be "robot" or "cypress", but was "${mode}"`);
         }
         
-        const output = await diffReportCollector.collectReport(baseDir, diffReport);
+        const screenshotDir = path.join(baseDir, screenshotFolder);
+        const output = await diffReportCollector.collectReport(screenshotDir, diffReport);
         tl.uploadArtifact('', output, artifactName);
 
         const skipFeedback = tl.getBoolInput('skipFeedback', false);

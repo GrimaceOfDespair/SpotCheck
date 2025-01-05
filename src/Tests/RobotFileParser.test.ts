@@ -8,7 +8,7 @@ describe('RobotFileParser', () => {
     const parser = new RobotFileParser('../Tests/reports/output-trimmed.xml');
 
     // Act
-    const robotReport = await parser.createDiffReport('screenshots');
+    const robotReport = await parser.createDiffReport();
 
     // Assert
     expect(robotReport.suites.length).toBe(1);
@@ -31,7 +31,7 @@ describe('RobotFileParser', () => {
     const parser = new RobotFileParser('../Tests/reports/output.xml');
 
     // Act
-    const robotReport = await parser.createDiffReport('screenshots');
+    const robotReport = await parser.createDiffReport();
 
     // Assert
     expect(robotReport.suites.length).toBe(1);
@@ -49,7 +49,7 @@ describe('RobotFileParser', () => {
     const parser = new RobotFileParser('../Tests/reports/output-two.xml');
 
     // Act
-    const robotReport = await parser.createDiffReport('screenshots');
+    const robotReport = await parser.createDiffReport();
 
     // Assert
     expect(robotReport.suites.length).toBe(1);
