@@ -29,6 +29,7 @@ function throwExpression(errorMessage: string): never {
 
         tl.debug(`input: ${input}`);
         tl.debug(`baseDir: ${baseDir}`);
+        tl.debug(`screenshotFolder: ${screenshotFolder}`);
 
         let diffReport: IDiffTestReport;
         switch (mode) {
