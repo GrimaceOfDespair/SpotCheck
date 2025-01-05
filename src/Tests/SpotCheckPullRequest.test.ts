@@ -1,7 +1,4 @@
-import * as assert from 'assert';
-import { TaskMockRunner } from 'azure-pipelines-task-lib/mock-run';
 import { MockTestRunner } from './MockTestRunner';
-import * as MockToolRunner from 'azure-pipelines-task-lib/mock-toolrunner';
 import path from 'node:path';
 
 describe('SpotCheckPullRequest Suite', function () {
@@ -12,9 +9,9 @@ describe('SpotCheckPullRequest Suite', function () {
     return new MockTestRunner(testPath, taskJsonPath);
   }
 
-  test('Run without arguments', async () => {
+  test('Missing input argument', async () => {
 
-      const testRunner = createTestRunner('Empty.ts');
+      const testRunner = createTestRunner('NoInput.ts');
 
       await testRunner.runAsync();
 
@@ -24,7 +21,7 @@ describe('SpotCheckPullRequest Suite', function () {
 
   }, 30 * 1000);
 
-  test('Run without PullRequest', async () => {
+  test('Input report without PullRequest', async () => {
 
     const testRunner = createTestRunner('NoPullRequest.ts');
 
@@ -37,5 +34,20 @@ describe('SpotCheckPullRequest Suite', function () {
     expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
     expect(testRunner.isUploaded('screenshots'));
 
-}, 30 * 1000);
+  }, 30 * 1000);
+
+  test('Input failing report for PullRequest without thread', async () => {
+
+    const testRunner = createTestRunner('FailWithoutThread.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([]);
+    expect(testRunner.isUploaded('screenshots'));
+
+  }, 30 * 1000);
 })

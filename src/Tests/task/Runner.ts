@@ -15,5 +15,11 @@ export function createMockRunner() {
     const __dirname = dirname();
     const taskPath: string = path.join(__dirname, '..', '..', 'SpotCheckPullRequest', 'SpotCheckPullRequest.ts');
 
+    process.env['SYSTEM_ACCESSTOKEN'] = 'FakeAccessToken';
+    process.env['SYSTEM_TEAMFOUNDATIONCOLLECTIONURI'] = 'http://example.com/tfs';
+    process.env['SYSTEM_TEAMPROJECT'] = 'FakeTeam';
+    process.env['BUILD_REPOSITORY_ID'] = 'FakeRepo';
+    process.env['BUILD_BUILDID'] = '666';
+
     return new TaskMockRunner(taskPath);
 }
