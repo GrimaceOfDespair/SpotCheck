@@ -64,7 +64,7 @@
       "^.+\\.tsx?$": [
         "ts-jest",
         {
-          "tsconfig": "tsconfig.test.json"
+          "tsconfig": "./src/Tests/tsconfig.json"
         }
       ],
       "^.+\\.jsx?$": [

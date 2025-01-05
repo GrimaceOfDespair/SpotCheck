@@ -1,11 +1,11 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "amd",
     "moduleResolution": "node",
     "target": "es5",
     "jsx": "react",
     "lib": ["es5", "dom"],
-    "types": ["react", "node"],
-    "esModuleInterop": true
+    "types": ["react", "node"]
   }
 }
