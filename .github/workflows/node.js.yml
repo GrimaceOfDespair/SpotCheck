@@ -6,6 +6,8 @@ name: Node.js CI
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - '**'
   pull_request:
     branches: [ "main" ]
 
@@ -20,21 +22,48 @@ jobs:
       contents: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js 20.x
+    - name: '📄 Checkout'
+      uses: actions/checkout@v4
+      
+    - name: '🔨 Use Node.js 20.x'
       uses: actions/setup-node@v3
       with:
         node-version: 20.x
         cache: 'npm'
-    - run: npm ci
-      working-directory: src/SpotCheck
-    - run: npm ci
+        
+    - name: '🔨 Install node packages'
+      run: npm ci
+    - name: Install node package for custom task
+      run: npm ci
       working-directory: src/SpotCheckV0
-    - run: npm ci
-      working-directory: src/Tests/task
-    - run: npm run build
-    - uses: ArtiomTr/jest-coverage-report-action@v2
+      
+    - name: '🔨 Build'
+      run: npm run build
+      
+    - name: '✅ Test'
+      uses: ArtiomTr/jest-coverage-report-action@v2
       with:
         test-script: npm test
         skip-step: install
-    - run: npm run publish-extension -- --auth-type pat -t ${{secrets.PUBLISH_PAT}}
+
+    - name: '📦 Package'
+      if: startsWith(github.ref, 'refs/tags/')
+      run: npm run package-extension -- --env version=${{github.ref_name}}
+        
+    - name: '🚀 Create release'
+      if: startsWith(github.ref, 'refs/tags/')
+      run: gh release create v${{github.ref_name}} --generate-notes
+      env:
+        GITHUB_TOKEN: ${{ github.TOKEN }}
+      shell: bash
+    
+    - name: '🚀 Upload release files'
+      if: startsWith(github.ref, 'refs/tags/')
+      run: gh release upload ${{github.event.release.tag_name}} igorkalders.spotcheck-${{github.ref_name}}.vsix
+      env:
+        GITHUB_TOKEN: ${{ github.TOKEN }}
+      shell: bash
+    
+    - name: '📦 Publish package'
+      if: startsWith(github.ref, 'refs/tags/')
+      run: npm run publish-extension -- --vsix igorkalders.spotcheck-${{github.ref_name}} --auth-type pat -t ${{secrets.PUBLISH_PAT}}
