@@ -1,11 +1,11 @@
 import { MockTestRunner } from './MockTestRunner';
 import path from 'node:path';
 
-describe('SpotCheckPullRequest Suite', function () {
+describe('SpotCheckV0 Suite', function () {
 
   function createTestRunner(test: string) {
     const testPath: string = path.join(__dirname, 'task', test);
-    const taskJsonPath: string = path.join(__dirname, '..', 'SpotCheckPullRequest', 'task.json');
+    const taskJsonPath: string = path.join(__dirname, '..', 'SpotCheckV0', 'task.json');
     return new MockTestRunner(testPath, taskJsonPath);
   }
 

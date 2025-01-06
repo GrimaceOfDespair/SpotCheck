@@ -23,7 +23,7 @@ class PatchAzureTaskLib {
   
 [webEntry, taskEntry] = [
     ["Config", "SpotCheck"],
-    ["SpotCheckPullRequest"]
+    ["SpotCheckV0"]
 ].map((components) => components
     .reduce((agg, component) => {
         agg[component] = `./src/${component}/${component}`;
@@ -48,7 +48,7 @@ const common = (clean, alias) => ({
 
 const taskConfig = (env, argv) => ({
     ...common(false, {
-        "azure-pipelines-task-lib": path.resolve("src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib"),
+        "azure-pipelines-task-lib": path.resolve("src/SpotCheckV0/node_modules/azure-pipelines-task-lib"),
     }),
     entry: taskEntry,
     target: 'node',
@@ -65,8 +65,8 @@ const taskConfig = (env, argv) => ({
         new CopyWebpackPlugin({
             patterns: [
                 { from: "**/task.json", context: "src" },
-                { from: "lib.json", context: "src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib", to: "SpotCheckPullRequest" },
-                { from: "Strings/**/*.resjson", context: "src/SpotCheckPullRequest/node_modules/azure-pipelines-task-lib", to: "SpotCheckPullRequest" },
+                { from: "lib.json", context: "src/SpotCheckV0/node_modules/azure-pipelines-task-lib", to: "SpotCheckV0" },
+                { from: "Strings/**/*.resjson", context: "src/SpotCheckV0/node_modules/azure-pipelines-task-lib", to: "SpotCheckV0" },
             ]
         })
     ],

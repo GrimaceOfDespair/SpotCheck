@@ -1,7 +1,7 @@
-import { ImageProcessor } from "../SpotCheckPullRequest/ImageProcessor";
+import { ImageProcessor } from "../SpotCheckV0/ImageProcessor";
 import path from 'node:path';
 import fs from 'node:fs';
-import { Temp } from "../SpotCheckPullRequest/Temp";
+import { Temp } from "../SpotCheckV0/Temp";
 
 describe('ImageProcessor', () => {
 

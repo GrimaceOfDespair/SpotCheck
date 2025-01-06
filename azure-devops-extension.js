@@ -97,7 +97,7 @@ module.exports = (env) => {
                     "ms.vss-distributed-task.tasks"
                 ],
                 properties: {
-                    name: "dist/SpotCheckPullRequest"
+                    name: "dist/SpotCheckV0"
                 }
             }
         ]

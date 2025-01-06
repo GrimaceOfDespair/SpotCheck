@@ -29,7 +29,7 @@ jobs:
     - run: npm ci
       working-directory: src/SpotCheck
     - run: npm ci
-      working-directory: src/SpotCheckPullRequest
+      working-directory: src/SpotCheckV0
     - run: npm ci
       working-directory: src/Tests/task
     - run: npm run build

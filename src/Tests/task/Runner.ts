@@ -13,7 +13,7 @@ export function getPath(file: string) {
 
 export function createMockRunner() {
     const __dirname = dirname();
-    const taskPath: string = path.join(__dirname, '..', '..', 'SpotCheckPullRequest', 'SpotCheckPullRequest.ts');
+    const taskPath: string = path.join(__dirname, '..', '..', 'SpotCheckV0', 'SpotCheckV0.ts');
 
     process.env['SYSTEM_ACCESSTOKEN'] = 'FakeAccessToken';
     process.env['SYSTEM_TEAMFOUNDATIONCOLLECTIONURI'] = 'http://example.com/tfs/';

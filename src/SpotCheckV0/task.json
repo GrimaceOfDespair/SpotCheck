@@ -1,7 +1,7 @@
 {
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
     "id": "5641ef4f-e16c-40c5-ae56-fd09bb6b618b",
-    "name": "SpotCheckPullRequest",
+    "name": "SpotCheckV0",
     "friendlyName": "SpotCheck PullRequest",
     "description": "Analyze e2e json report and add feedback to pull request",
     "helpMarkDown": "",
@@ -25,7 +25,7 @@
     ],
     "execution": {
         "Node20_1": {
-            "target": "SpotCheckPullRequest.js"
+            "target": "SpotCheckV0.js"
         }
     }
 }

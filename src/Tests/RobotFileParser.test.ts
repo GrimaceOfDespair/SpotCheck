@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { RobotFileParser } from '../SpotCheckPullRequest/Report/RobotFileParser';
+import { RobotFileParser } from '../SpotCheckV0/Report/RobotFileParser';
 
 describe('RobotFileParser', () => {
   test('Parse trimmed robot file with screenshot in 1 test', async () => {

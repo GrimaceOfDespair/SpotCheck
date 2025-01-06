@@ -1,8 +1,8 @@
-import { DiffReportCollector } from "../SpotCheckPullRequest/DiffReportCollector";
+import { DiffReportCollector } from "../SpotCheckV0/DiffReportCollector";
 import path from 'node:path';
 import fs from 'node:fs';
-import { RobotFileParser } from "../SpotCheckPullRequest/Report/RobotFileParser";
-import { IDiffTestReport } from "../SpotCheckPullRequest/Report/DiffReport";
+import { RobotFileParser } from "../SpotCheckV0/Report/RobotFileParser";
+import { IDiffTestReport } from "../SpotCheckV0/Report/DiffReport";
 
 describe('DiffReportCollector', () => {
 
