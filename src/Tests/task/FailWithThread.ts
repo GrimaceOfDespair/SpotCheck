@@ -7,8 +7,8 @@ const taskRunner = createMockRunner();
 process.env['SYSTEM_PULLREQUEST_PULLREQUESTID'] = '123';    
 
 taskRunner.setInput('input', getPath('../reports/output-fail.json'));
-taskRunner.setInput('mode', 'cypress');
-taskRunner.setInput('screenshotFolder', 'screenshots');
+taskRunner.setInput('baseDir', getPath('../reports/screenshots'));
+taskRunner.setInput('type', 'cypress');
 
 taskRunner.registerMock('azure-pipelines-task-lib/toolrunner', MockToolRunner);
 taskRunner.registerMock('azure-devops-node-api', MockDevopsApi);

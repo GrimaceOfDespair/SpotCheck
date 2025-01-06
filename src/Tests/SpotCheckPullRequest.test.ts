@@ -36,6 +36,21 @@ describe('SpotCheckPullRequest Suite', function () {
 
   }, 30 * 1000);
 
+  test('Robot report without PullRequest', async () => {
+
+    const testRunner = createTestRunner('RobotReport.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
+    expect(testRunner.isUploaded('screenshots'));
+
+  }, 30 * 1000);
+
   test('Input failing report for PullRequest without thread', async () => {
 
     const testRunner = createTestRunner('FailWithoutThread.ts');

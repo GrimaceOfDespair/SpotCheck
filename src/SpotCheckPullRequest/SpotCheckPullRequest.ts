@@ -12,12 +12,11 @@ function throwExpression(errorMessage: string): never {
 
  (async function() {
      try {
-        const [ input, artifactName, mode, baseDir, screenshotFolder ] = [
+        const [ input, artifactName, type, baseDir ] = [
             [ 'input', '', 'specify a report file for "input"' ],
             [ 'artifactName', 'screenshots' ],
-            [ 'mode', 'robot' ],
+            [ 'type', 'robot' ],
             [ 'baseDir', path.dirname(tl.getInput('input', false) ?? '') ],
-            [ 'screenshotFolder', 'screenhots' ]
         ]
         .map(([ key, defaultValue, errorMessage ]) =>
             tl.getInput(key, errorMessage !== undefined)
@@ -27,15 +26,14 @@ function throwExpression(errorMessage: string): never {
 
         const diffReportCollector = new DiffReportCollector();
 
-        tl.debug(`input: ${input}`);
+        tl.debug(`type: ${type}`);
         tl.debug(`baseDir: ${baseDir}`);
-        tl.debug(`screenshotFolder: ${screenshotFolder}`);
 
         let diffReport: IDiffTestReport;
-        switch (mode) {
+        switch (type) {
             case 'robot':
 
-                diffReport = await new RobotFileParser(input, baseDir, screenshotFolder)
+                diffReport = await new RobotFileParser(input, baseDir)
                     .createDiffReport();
 
                 break;
@@ -47,11 +45,10 @@ function throwExpression(errorMessage: string): never {
                 break;
 
             default:
-                throw new Error(`"mode" should be "robot" or "cypress", but was "${mode}"`);
+                throw new Error(`"type" should be "robot" or "cypress", but was "${type}"`);
         }
         
-        const screenshotDir = path.join(baseDir, screenshotFolder);
-        const output = await diffReportCollector.collectReport(screenshotDir, diffReport);
+        const output = await diffReportCollector.collectReport(baseDir, diffReport);
         tl.uploadArtifact('', output, artifactName);
 
         const skipFeedback = tl.getBoolInput('skipFeedback', false);

@@ -17,10 +17,9 @@ export class RobotFileParser {
     private _context: ReportContext;
     private _images: ImageProcessor = new ImageProcessor();
 
-    constructor(reportFile: string, baseDir?: string, screenshotFolder?: string) {
+    constructor(reportFile: string, baseDir?: string) {
         this._context = new ReportContext(reportFile,
-            baseDir ?? path.dirname(reportFile),
-            screenshotFolder ?? 'screenshots');
+            baseDir ?? path.dirname(reportFile));
     }
 
     async createDiffReport(): Promise<IDiffTestReport> {

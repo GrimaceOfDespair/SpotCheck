@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 export class ReportContext {
-    constructor(reportFile: string, baseDir: string, screenshotFolder: string) {
+    constructor(reportFile: string, baseDir: string) {
 
         const absoluteReportFile = path.isAbsolute(reportFile)
             ? reportFile
@@ -11,22 +11,20 @@ export class ReportContext {
         this.basePath = path.dirname(absoluteReportFile);
         this.baseName = path.basename(absoluteReportFile, '.xml');
         this.reportJson = path.join(this.basePath, `${this.baseName}.json`);
-        this._screenshotFolder = screenshotFolder;
         this._baseDir = baseDir;
     }
 
     resolveRelative(version: string, image: string): string {
-        return path.join(this._screenshotFolder, version, image);
+        return path.join(version, image);
     }
 
     resolveAbsolute(version: string, image: string): string {
-        return path.join(this._baseDir, this._screenshotFolder, version, image);
+        return path.join(this._baseDir, version, image);
     }
 
     reportFile: string;
     basePath: string;
     baseName: string;
     reportJson: string;
-    private _screenshotFolder: string;
     private _baseDir: string;
 }
