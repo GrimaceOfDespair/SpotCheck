@@ -3,6 +3,7 @@ module.exports = (env) => {
     const publisher = 'igorkalders';
 
     const isDevelopment = env.mode == 'development';
+    const version = env.version || '1.0.0';
 
     const [id, name] = isDevelopment
         ? ['spotcheck-dev', 'SpotCheck Dev']
@@ -13,7 +14,7 @@ module.exports = (env) => {
         id,
         name,
         publisher,
-        version: '1.0.0',
+        version,
         description: 'Enable screenshots spot checks from your application right from within Azure DevOps',
         categories: [
             'Azure Pipelines'
