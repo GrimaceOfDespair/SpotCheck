@@ -1,5 +1,5 @@
 import * as MockToolRunner from 'azure-pipelines-task-lib/mock-toolrunner';
-import { createMockRunner, getPath } from './runner';
+import { createMockRunner, getPath } from './Runner';
 
 const taskRunner = createMockRunner();
 
