@@ -8,8 +8,8 @@
     "category": "Utility",
     "author": "Igor Kalders",
     "version": {
-        "Major": 4,
-        "Minor": 5,
+        "Major": 5,
+        "Minor": 2,
         "Patch": 0
     },
     "instanceNameFormat": "Analyze $(reportFile)",
