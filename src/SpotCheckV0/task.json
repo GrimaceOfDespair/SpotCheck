@@ -1,26 +1,54 @@
 {
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
     "id": "5641ef4f-e16c-40c5-ae56-fd09bb6b618b",
-    "name": "SpotCheckV0",
-    "friendlyName": "SpotCheck PullRequest",
-    "description": "Analyze e2e json report and add feedback to pull request",
+    "name": "SpotCheck",
+    "friendlyName": "SpotCheck",
+    "description": "Analyze e2e reports with screenshots, and report baseline differences",
     "helpMarkDown": "",
     "category": "Utility",
     "author": "Igor Kalders",
     "version": {
-        "Major": 5,
-        "Minor": 2,
+        "Major": 1,
+        "Minor": 0,
         "Patch": 0
     },
-    "instanceNameFormat": "Analyze $(reportFile)",
+    "instanceNameFormat": "Analyze $(input)",
     "inputs": [
         {
-            "name": "reportFile",
-            "type": "string",
+            "name": "input",
+            "type": "filePath",
             "label": "Report file",
-            "defaultValue": "output.json",
+            "defaultValue": "report.xml",
+            "required": true,
+            "helpMarkDown": "Robot or Cypress report"
+        },
+        {
+            "name": "baseDir",
+            "type": "filePath",
+            "label": "Report file",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Folder path to screenshots. Defaults to report folder."
+        },
+        {
+            "name": "type",
+            "type": "pickList",
+            "label": "Report type",
+            "defaultValue": "robot",
             "required": false,
-            "helpMarkDown": "Json file containing e2e results"
+            "helpMarkDown": "Report type. Can be robot or cypress",
+            "options": {
+                "robot": "Robot Framework",
+                "cypress": "Cypress Image Diff"
+            }
+        },
+        {
+            "name": "artifactName",
+            "type": "string",
+            "label": "Artifact name",
+            "defaultValue": "screenshots",
+            "required": false,
+            "helpMarkDown": "Build artifact name where diff report is uploaded"
         }
     ],
     "execution": {
