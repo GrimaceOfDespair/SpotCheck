@@ -55,23 +55,23 @@ jobs:
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
         
     - name: '📦 Package'
-      if: steps.build.version == 'success'
+      if: steps.version.outcome == 'success'
       run: npm run package-extension -- --env version=$VERSION
         
     - name: '🚀 Create release'
-      if: steps.build.version == 'success'
+      if: steps.version.outcome == 'success'
       run: gh release create v$VERSION --generate-notes
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       shell: bash
     
     - name: '🚀 Upload release files'
-      if: steps.build.version == 'success'
+      if: steps.version.outcome == 'success'
       run: gh release upload v$VERSION igorkalders.spotcheck-${{github.ref_name}}.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       shell: bash
     
     - name: '📦 Publish package'
-      if: steps.build.version == 'success'
+      if: steps.version.outcome == 'success'
       run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION --auth-type pat -t ${{secrets.PUBLISH_PAT}}
