@@ -47,30 +47,31 @@ jobs:
         test-script: npm test
         skip-step: install
 
-    - name: Set VERSION variable from tag
+    - name: 🔖 Set VERSION variable from tag
+      id: version
       if: startsWith(github.ref, 'refs/tags/')
       run: | 
-        echo "VERSION=${{ github.ref }}" >> $GITHUB_ENV
-        echo "VERSION=${VERSION:1}" >> $GITHUB_ENV
+        TAG=${{ github.event.create.tag_name }}
+        echo "VERSION=${TAG#v}" >> $GITHUB_ENV
         
     - name: '📦 Package'
-      if: startsWith(github.ref, 'refs/tags/')
+      if: steps.build.version == 'success'
       run: npm run package-extension -- --env version=$VERSION
         
     - name: '🚀 Create release'
-      if: startsWith(github.ref, 'refs/tags/')
+      if: steps.build.version == 'success'
       run: gh release create v$VERSION --generate-notes
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       shell: bash
     
     - name: '🚀 Upload release files'
-      if: startsWith(github.ref, 'refs/tags/')
+      if: steps.build.version == 'success'
       run: gh release upload v$VERSION igorkalders.spotcheck-${{github.ref_name}}.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
       shell: bash
     
     - name: '📦 Publish package'
-      if: startsWith(github.ref, 'refs/tags/')
+      if: steps.build.version == 'success'
       run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION --auth-type pat -t ${{secrets.PUBLISH_PAT}}
