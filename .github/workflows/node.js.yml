@@ -54,22 +54,34 @@ jobs:
         TAG=${{ github.ref_name }}
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
         
+        IS_PRERELEASE=$(gh release view v$VERSION --json isPrerelease --jq '.isPrerelease')
+        if [[ $IS_PRERELEASE == "" ]]; then
+          echo "VSIX_SUFFIX=-dev" >> $GITHUB_ENV
+          echo "MODE=production"
+        else
+          echo "VSIX_SUFFIX=" >> $GITHUB_ENV
+          echo "MODE=development"
+        fi
+        
+        echo "EXISTING_RELEASE=$(gh release view v$VERSION --json name --jq '.name')" >> $GITHUB_ENV
+        
     - name: '📦 Package'
       if: steps.version.outcome == 'success'
-      run: npm run package-extension -- --env version=$VERSION
+      run: npm run package-extension -- --env version=$VERSION --env mode=$MODE
         
     - name: '🚀 Create release'
-      if: steps.version.outcome == 'success'
-      run: gh release create v$VERSION --generate-notes
+      if: steps.version.outcome == 'success' && ${{ $env.EXISTING_RELEASE }} != ${{ github.ref_name }}
+      run: |
+        gh release create v$VERSION --generate-notes
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
     
     - name: '🚀 Upload release files'
       if: steps.version.outcome == 'success'
-      run: gh release upload v$VERSION igorkalders.spotcheck-$VERSION.vsix
+      run: gh release upload v$VERSION igorkalders.spotcheck-$VERSION$VSIX_SUFFIX.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
     
     - name: '📦 Publish package'
       if: steps.version.outcome == 'success'
-      run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION.vsix --auth-type pat -t ${{secrets.PUBLISH_PAT}}
+      run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION$VSIX_SUFFIX.vsix --auth-type pat -t ${{secrets.PUBLISH_PAT}}
