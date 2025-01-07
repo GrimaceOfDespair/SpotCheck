@@ -63,14 +63,12 @@ jobs:
       run: gh release create v$VERSION --generate-notes
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
-      shell: bash
     
     - name: '🚀 Upload release files'
       if: steps.version.outcome == 'success'
-      run: gh release upload v$VERSION igorkalders.spotcheck-${{github.ref_name}}.vsix
+      run: gh release upload v$VERSION igorkalders.spotcheck-$VERSION.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
-      shell: bash
     
     - name: '📦 Publish package'
       if: steps.version.outcome == 'success'
