@@ -72,4 +72,4 @@ jobs:
     
     - name: '📦 Publish package'
       if: steps.version.outcome == 'success'
-      run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION --auth-type pat -t ${{secrets.PUBLISH_PAT}}
+      run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION.vsix --auth-type pat -t ${{secrets.PUBLISH_PAT}}
