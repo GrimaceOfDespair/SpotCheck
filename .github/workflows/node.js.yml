@@ -63,7 +63,7 @@ jobs:
           echo "MODE=development"
         fi
         
-        echo "EXISTING_RELEASE=$(gh release view v$VERSION --json name --jq '.name')" >> $GITHUB_ENV
+        echo "EXISTING_RELEASE=$(gh release view v$VERSION --json name --jq '.name' || echo '')" >> $GITHUB_ENV
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
         
