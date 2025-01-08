@@ -53,7 +53,7 @@ jobs:
       run: |
         # Concat major.minor with build attempt to guarantee unique vsix
         TAG=$(echo ${{ github.ref_name }} | sed -E 's/.*v([[:digit:]]+\.[[:digit:]]+).*/\1/')
-        echo "VERSION=$TAG.${{ github.run_attempt }}" >> $GITHUB_ENV
+        echo "VERSION=$TAG.${{ github.run_number }}" >> $GITHUB_ENV
 
         # Assume prerelease if existing release is marked as such, or tag contains hyphen
         IS_PRERELEASE=$(gh release view ${{ github.ref_name }} --json isPrerelease --jq '.isPrerelease' || echo '')
