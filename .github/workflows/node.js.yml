@@ -69,7 +69,7 @@ jobs:
         
     - name: '📦 Package'
       if: steps.version.outcome == 'success'
-      run: npm run package-extension -- --env version=$VERSION --env mode=$MODE
+      run: npm run package-extension -- --env version=$VERSION mode=$MODE
         
     - name: '🚀 Create release'
       if: ( steps.version.outcome == 'success' ) && ( env.EXISTING_RELEASE != github.ref_name )
