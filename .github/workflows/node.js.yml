@@ -84,7 +84,7 @@ jobs:
     
     - name: '🚀 Upload release files'
       if: steps.version.outcome == 'success'
-      run: gh release upload v$VERSION igorkalders.spotcheck$VSIX_SUFFIX-$VERSION.vsix
+      run: gh release upload ${{ github.ref_name }} igorkalders.spotcheck$VSIX_SUFFIX-$VERSION.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
     
