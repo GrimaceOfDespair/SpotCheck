@@ -29,7 +29,7 @@ module.exports = (env) => {
         },
         content: {
             details: {
-                path: 'overview.md'
+                path: 'README.md'
             }
         },
         files: [
