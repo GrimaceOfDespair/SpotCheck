@@ -80,10 +80,10 @@ jobs:
     
     - name: '🚀 Upload release files'
       if: steps.version.outcome == 'success'
-      run: gh release upload v$VERSION igorkalders.spotcheck-$VERSION$VSIX_SUFFIX.vsix
+      run: gh release upload v$VERSION igorkalders.spotcheck$VSIX_SUFFIX-$VERSION.vsix
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
     
     - name: '📦 Publish package'
       if: steps.version.outcome == 'success'
-      run: npm run publish-extension -- --vsix igorkalders.spotcheck-$VERSION$VSIX_SUFFIX.vsix --auth-type pat -t ${{secrets.PUBLISH_PAT}}
+      run: npm run publish-extension -- --vsix igorkalders.spotcheck$VSIX_SUFFIX-$VERSION.vsix --auth-type pat -t ${{secrets.PUBLISH_PAT}}
