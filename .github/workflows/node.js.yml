@@ -54,7 +54,7 @@ jobs:
         TAG=${{ github.ref_name }}
         echo "VERSION=${TAG#v}" >> $GITHUB_ENV
         
-        IS_PRERELEASE=$(gh release view v$VERSION --json isPrerelease --jq '.isPrerelease')
+        IS_PRERELEASE=$(gh release view v$VERSION --json isPrerelease --jq '.isPrerelease 2> /dev/null || echo ''')
         if [[ $IS_PRERELEASE == "" ]]; then
           echo "VSIX_SUFFIX=-dev" >> $GITHUB_ENV
           echo "MODE=production"
