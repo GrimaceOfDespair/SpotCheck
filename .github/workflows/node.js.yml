@@ -70,7 +70,7 @@ jobs:
       run: npm run package-extension -- --env version=$VERSION --env mode=$MODE
         
     - name: '🚀 Create release'
-      if: ( steps.version.outcome == 'success' ) && ( ${{ env.EXISTING_RELEASE }} != ${{ github.ref_name }} )
+      if: ( steps.version.outcome == 'success' ) && ( env.EXISTING_RELEASE != github.ref_name )
       run: |
         gh release create v$VERSION --generate-notes
       env:
