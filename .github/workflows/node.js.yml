@@ -47,15 +47,18 @@ jobs:
         test-script: npm test
         skip-step: install
 
-    - name: 🔖 Set VERSION variable from tag
+    - name: '🔖 Set VERSION variable from tag'
       id: version
       if: startsWith(github.ref, 'refs/tags/')
       run: |
-        # Concat major.minor with build attempt to guarantee unique vsix
-        TAG=$(echo ${{ github.ref_name }} | sed -E 's/.*v([[:digit:]]+\.[[:digit:]]+).*/\1/')
-        echo "VERSION=$TAG.${{ github.run_number }}" >> $GITHUB_ENV
+        # Extract major and minor and use run number for versioning unique vsix
+        MAJOR=$(echo ${{ github.ref_name }} | sed -E 's/.*v([[:digit:]]+)\.[[:digit:]]+.*/\1/')
+        MINOR=$(echo ${{ github.ref_name }} | sed -E 's/.*v[[:digit:]]+\.([[:digit:]]+).*/\1/')
+        echo "VERSION=$MAJOR.$MINOR.${{ github.run_number }}" >> $GITHUB_ENV
 
         # Assume prerelease if existing release is marked as such, or tag contains hyphen
+        # This allows us to create prerelease by either pushing prerelease tags or
+        # creating an actual prerelease in GitHub
         IS_PRERELEASE=$(gh release view ${{ github.ref_name }} --json isPrerelease --jq '.isPrerelease' || echo '')
         if [[ $IS_PRERELEASE == 'true' || '${{ github.ref_name }}' == *'-'* ]]; then
           echo "VSIX_SUFFIX=-dev" >> $GITHUB_ENV
@@ -66,7 +69,9 @@ jobs:
           echo "MODE=production" >> $GITHUB_ENV
           echo "RELEASE_ARGS=" >> $GITHUB_ENV
         fi
-        
+
+        TASK_JSON=$(jq --arg Major $MAJOR --arg $MINOR --arg ${{ github.run_number }} '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json) && echo $TASK_JSON > src/SpotCheckV0/task.json
+
         echo "EXISTING_RELEASE=$(gh release view ${{ github.ref_name }} --json name --jq '.name' || echo '')" >> $GITHUB_ENV
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
