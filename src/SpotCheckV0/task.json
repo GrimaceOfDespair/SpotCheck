@@ -43,6 +43,14 @@
             }
         },
         {
+            "name": "skipFeedback",
+            "type": "boolean",
+            "label": "Skip feedback on Pull Request",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Do not post comments on related pull request"
+        },
+        {
             "name": "artifactName",
             "type": "string",
             "label": "Artifact name",
