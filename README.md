@@ -57,17 +57,14 @@ on the related pull request.
     skipFeedback: true
 ```
 
-
 Differences against the baseline are reported through a dedicated threadon the PR. When a difference is resolved, the thread will automatically resolve.
 
-<img width="707" alt="image" src="https://github.com/user-attachments/assets/9380cf09-df9a-49a2-9088-015e069c40e0" />
-
+<img width="707" alt="PR Feedback" src="images/pull-request-feedback.png" />
 
 The visual differences are presented on an extra tab in the build pipeline, to which the PR will link as well.
 
-<img width="1319" alt="image" src="https://github.com/user-attachments/assets/294a3d03-026e-437d-9be1-493ee3386746" />
-
+<img width="1319" alt="Visual differences" src="images/visual-differences.png" />
 
 It only requires a few clicks to update the baseline, if a change is found to be legitimate.
 
-<img width="921" alt="image" src="https://github.com/user-attachments/assets/13a39875-42a5-4d77-afee-b5756b981bf2" />
+<img width="921" alt="Reset baseline" src="images/reset-baseline.png" />

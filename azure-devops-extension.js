@@ -10,6 +10,7 @@ module.exports = (env) => {
         : ['spotcheck', 'SpotCheck'];
 
     let manifest = {
+        public: !isDevelopment,
         manifestVersion: 1,
         id,
         name,
@@ -30,19 +31,53 @@ module.exports = (env) => {
         content: {
             details: {
                 path: 'README.md'
-            }
+            },
+            license:
+            {
+                path: "LICENSE"
+            },
+        },
+        links: {
+            repository: {
+                uri: "https://github.com/GrimaceOfDespair/SpotCheck"
+            },
+            issues: {
+                uri: "https://github.com/GrimaceOfDespair/SpotCheck/issues"
+            },
+        },
+        repository: {
+            type: "git",
+            uri: "https://github.com/GrimaceOfDespair/SpotCheck"
         },
         files: [
             {
                 path: 'dist',
                 addressable: true
-            }
+            },
+        ],
+        badges: [
+            {
+                href: "https://github.com/GrimaceOfDespair/SpotCheck",
+                uri: "https://github.com/GrimaceOfDespair/SpotCheck/actions/workflows/node.js.yml/badge.svg",
+                description: "GitHub build"
+            },
         ],
         scopes: [
             'vso.build',
             'vso.extension.default',
             'vso.work',
             'vso.code_write'
+        ],
+        screenshots: [
+            {
+                path: "images/pull-request-feedback.png"
+            },
+            {
+                path: "images/visual-differences.png"
+            },
+            {
+                path: "images/reset-baseline.png"
+            },
         ],
         contributions: [
             {
