@@ -38,15 +38,6 @@ jobs:
       run: npm ci
       working-directory: src/SpotCheckV0
       
-    - name: '🔨 Build'
-      run: npm run build
-      
-    - name: '✅ Test'
-      uses: ArtiomTr/jest-coverage-report-action@v2
-      with:
-        test-script: npm test
-        skip-step: install
-
     - name: '🔖 Set VERSION variable from tag'
       id: version
       if: startsWith(github.ref, 'refs/tags/')
@@ -81,6 +72,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
         
+    - name: '🔨 Build'
+      run: npm run build
+      
+    - name: '✅ Test'
+      uses: ArtiomTr/jest-coverage-report-action@v2
+      with:
+        test-script: npm test
+        skip-step: install
+
     - name: '📦 Package'
       if: steps.version.outcome == 'success'
       run: npm run package-extension -- --env version=$VERSION mode=$MODE
