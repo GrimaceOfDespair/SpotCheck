@@ -54,7 +54,8 @@ jobs:
         # Extract major and minor and use run number for versioning unique vsix
         MAJOR=$(echo ${{ github.ref_name }} | sed -E 's/.*v([[:digit:]]+)\.[[:digit:]]+.*/\1/')
         MINOR=$(echo ${{ github.ref_name }} | sed -E 's/.*v[[:digit:]]+\.([[:digit:]]+).*/\1/')
-        echo "VERSION=$MAJOR.$MINOR.${{ github.run_number }}" >> $GITHUB_ENV
+        PATCH=${{ github.run_number }}
+        echo "VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
 
         # Assume prerelease if existing release is marked as such, or tag contains hyphen
         # This allows us to create prerelease by either pushing prerelease tags or
@@ -70,7 +71,8 @@ jobs:
           echo "RELEASE_ARGS=" >> $GITHUB_ENV
         fi
 
-        TASK_JSON=$(jq --arg Major $MAJOR --arg Minor $MINOR --arg Patch ${{ github.run_number }} '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json) && echo $TASK_JSON > src/SpotCheckV0/task.json
+        jq --arg Major $MAJOR --arg Minor $MINOR --arg Patch $PATCH '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json > src/SpotCheckV0/task.bak.json && mv src/SpotCheckV0/task.bak.json src/SpotCheckV0/task.json
+        cat src/SpotCheckV0/task.json
 
         echo "EXISTING_RELEASE=$(gh release view ${{ github.ref_name }} --json name --jq '.name' || echo '')" >> $GITHUB_ENV
 
