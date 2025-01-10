@@ -70,7 +70,7 @@ jobs:
           echo "RELEASE_ARGS=" >> $GITHUB_ENV
         fi
 
-        TASK_JSON=$(jq --arg Major $MAJOR --arg $MINOR --arg ${{ github.run_number }} '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json) && echo $TASK_JSON > src/SpotCheckV0/task.json
+        TASK_JSON=$(jq --arg Major $MAJOR --arg Minor $MINOR --arg Patch ${{ github.run_number }} '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json) && echo $TASK_JSON > src/SpotCheckV0/task.json
 
         echo "EXISTING_RELEASE=$(gh release view ${{ github.ref_name }} --json name --jq '.name' || echo '')" >> $GITHUB_ENV
 
