@@ -75,6 +75,9 @@
         {}
       ]
     },
+    "coveragePathIgnorePatterns": [
+      "src/Tests"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!(react-native|azure-devops-ui|azure-devops-extension-sdk|pixelmatch)/)"
     ],
