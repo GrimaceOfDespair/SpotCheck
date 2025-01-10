@@ -73,6 +73,9 @@ jobs:
         TASK_JSON=$(jq --arg Major $MAJOR --arg $MINOR --arg ${{ github.run_number }} '.version |= { "Major": $Major | tonumber, "Minor": $Minor | tonumber, "Patch": $Patch | tonumber }' src/SpotCheckV0/task.json) && echo $TASK_JSON > src/SpotCheckV0/task.json
 
         echo "EXISTING_RELEASE=$(gh release view ${{ github.ref_name }} --json name --jq '.name' || echo '')" >> $GITHUB_ENV
+
+        # Make package description images relative from GitHub
+        sed -r "s#(.*)(images/[^\"]+)(.*)#printf '%shttps://raw.githubusercontent.com/GrimaceOfDespair/SpotCheck/main/%s%s' '\1' '\2' '\3'#e" README.md
       env:
         GITHUB_TOKEN: ${{ github.TOKEN }}
         
