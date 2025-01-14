@@ -89,4 +89,23 @@ describe('RobotFileParser', () => {
     expect(test2.failureThreshold).toBe(.05);
 
   }, 30_000);
+
+  test('Parse robot file with screenshot path containing invalid characters', async () => {
+
+    // Arrange
+    const parser = new RobotFileParser('../Tests/reports/output-invalid-path.xml');
+
+    // Act
+    const robotReport = await parser.createDiffReport();
+
+    // Assert
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test1] = robotReport.suites[0].tests;
+
+    expect(test1.name).toBe('Create_List');
+    expect(test1.comparisonPath).toBe('Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+    expect(test1.failureThreshold).toBe(.1);
+
+  }, 30_000);
 })

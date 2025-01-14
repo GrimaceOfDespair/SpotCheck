@@ -26,21 +26,10 @@ export class RobotReportRecorder implements SaxParserRecorder {
         }, <IRobotSuites>{});
     }
 
-    normalize(screenshot: string) {
-        const normalizedScreenshot = screenshot
+    normalize = (screenshot: string) =>
+        screenshot
             .replace(/ /g, '_')
             .replace(/[^-\w.]/g, '');
-
-        switch (normalizedScreenshot) {
-            case '':
-            case '.':
-            case '..':
-                throw new Error(`Cannot create file name from ${screenshot} as it results in ${normalizedScreenshot}`);
-
-            default:
-                return normalizedScreenshot;
-        }
-    }
 
     start(_: State) {
     }
