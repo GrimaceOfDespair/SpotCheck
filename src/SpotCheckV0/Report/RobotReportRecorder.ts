@@ -105,12 +105,15 @@ export class RobotReportRecorder implements SaxParserRecorder {
         }
     }
 
+    /* istanbul ignore next */
     onCDATA(cdata: string) {
     }
 
+    /* istanbul ignore next */
     onOpenCDATA(tag: string) {
     }
 
+    /* istanbul ignore next */
     onCloseCDATA(tag: string) {
     }
 }
