@@ -3,6 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { RobotFileParser } from "../SpotCheckV0/Report/RobotFileParser";
 import { IDiffTestReport } from "../SpotCheckV0/Report/DiffReport";
+import { ILogger } from "../SpotCheckV0/Report/ILogger";
 
 describe('DiffReportCollector', () => {
 
@@ -84,14 +85,20 @@ describe('DiffReportCollector', () => {
             'baseline']);
     });
 
-    test('Collect simple report with passing and failing screenshot', async () => {
+    test('Collect simple report with passing and failing screenshot with logger', async () => {
 
         // Arrange
         const report = <IDiffTestReport>require('./reports/output-fail.json');
         const baseDir = path.join(__dirname, 'reports');
+        let error: string[] = [];
+        let info: string[] = [];
+        const logger: ILogger = {
+            info: (message) => info.push(message),
+            error: (message) => error.push(message),
+        };
 
         // Act
-        const collectedReportFolder = await new DiffReportCollector('output.json', 'screenshots')
+        const collectedReportFolder = await new DiffReportCollector('output.json', 'screenshots', logger)
             .collectReport(baseDir, report);
 
         // Assert
@@ -108,5 +115,11 @@ describe('DiffReportCollector', () => {
             'Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png',
             'Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png',
             'baseline']);
+
+        expect(error).toEqual([]);
+        expect(info).toEqual([
+            `Writing report to ${imageReport}`,
+            `Collect screenshots from ${baseDir} into ${collectedReportFolder}`
+        ]);
     });
 })
