@@ -4,12 +4,11 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 
 export class Temp {
-    static async createFolder(suffix?: string, tmpdir?: string): Promise<string> {
+    static async createFolder(): Promise<string> {
 
         const folder = path.join(
-            tmpdir || os.tmpdir(),
-            crypto.randomBytes(16).toString('hex'),
-            suffix ?? '');
+            os.tmpdir(),
+            crypto.randomBytes(16).toString('hex'));
 
         await fs.promises.mkdir(folder, { recursive: true });
 
