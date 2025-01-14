@@ -67,6 +67,7 @@ describe('SpotCheckV0 Suite', function () {
     ]);
     expect(testRunner.isUploaded('screenshots'));
     expect(testRunner.stdOutContained('Creating new thread')).toBe(true);
+    expect(testRunner.stdOutContained('E2E report contains failures')).toBe(true);
 
   }, 30 * 1000);
 
@@ -86,6 +87,7 @@ describe('SpotCheckV0 Suite', function () {
     ]);
     expect(testRunner.isUploaded('screenshots'));
     expect(testRunner.stdOutContained('Adding comment to pull request')).toBe(true);
+    expect(testRunner.stdOutContained('E2E report contains failures')).toBe(true);
 
   }, 30 * 1000);
 
@@ -118,6 +120,24 @@ describe('SpotCheckV0 Suite', function () {
     expect(testRunner.warningIssues).toEqual([]);
     expect(testRunner.isUploaded('screenshots'));
     expect(testRunner.stdOutContained('Close pending comments on thread')).toBe(true);
+
+  }, 30 * 1000);
+
+  test('Input failing report with dryrun', async () => {
+
+    const testRunner = createTestRunner('FailSkipFeedback.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([]);
+    expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('E2E report contains failures')).toBe(false);
+    expect(testRunner.stdOutContained('Creating new thread')).toBe(false);
+    expect(testRunner.stdOutContained('Adding comment to pull request')).toBe(false);
 
   }, 30 * 1000);
 })
