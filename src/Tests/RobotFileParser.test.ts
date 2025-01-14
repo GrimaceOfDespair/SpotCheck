@@ -25,6 +25,30 @@ describe('RobotFileParser', () => {
 
   }, 30_000);
 
+  test('Parse trimmed robot file with screenshot in 1 test from absolute path', async () => {
+
+    // Arrange
+    const reportFile = path.join(__dirname, '../Tests/reports/output-trimmed.xml');
+    const parser = new RobotFileParser(reportFile);
+
+    // Act
+    const robotReport = await parser.createDiffReport();
+
+    // Assert
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test1, test2] = robotReport.suites[0].tests;
+
+    expect(test1.name).toBe('Create_List');
+    expect(test1.comparisonPath).toBe('Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+    expect(test1.failureThreshold).toBe(.1);
+
+    expect(test2.name).toBe('Create_List');
+    expect(test2.comparisonPath).toBe('Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png');
+    expect(test2.failureThreshold).toBeNaN;
+
+  }, 30_000);
+
   test('Parse robot file with screenshot in 1 test', async () => {
 
     // Arrange
