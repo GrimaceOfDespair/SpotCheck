@@ -1,4 +1,5 @@
 import { IDiffTestReport } from "./Report/DiffReport";
+import { ILogger, NullLogger } from "./Report/ILogger";
 import { Temp } from "./Temp";
 import fs from 'node:fs';
 import path from 'node:path';
@@ -7,17 +8,20 @@ export class DiffReportCollector {
 
     private _reportName: string;
     private _screenshots: string;
+    private _logger: ILogger;
 
-    constructor(reportName?: string, screenshots?: string) {
+    constructor(reportName?: string, screenshots?: string, logger?: ILogger) {
         this._reportName = reportName ?? 'diff-report.json';
         this._screenshots = screenshots ?? '';
+        this._logger = logger ?? NullLogger;
     }
 
     async collectReport(baseDir: string, report: IDiffTestReport): Promise<string> {
         const output = await Temp.createFolder();
         const targetReport = path.join(output, this._reportName);
         
-        console.info(`Writing report to ${targetReport}`);
+        this._logger.info(`Writing report to ${targetReport}`);
+
         await fs.promises.writeFile(targetReport, JSON.stringify(report));
 
         await this._collectScreenshots(baseDir, output, report);
@@ -27,7 +31,7 @@ export class DiffReportCollector {
 
     private async _collectScreenshots(source: string, target:string, report: IDiffTestReport) {
 
-        console.info(`Collect screenshots from ${source} into ${target}`);
+        this._logger.info(`Collect screenshots from ${source} into ${target}`);
 
         for (const test of report.suites.flatMap(s => s.tests)) {
             await this._copyImage(source, target, test.baselinePath);

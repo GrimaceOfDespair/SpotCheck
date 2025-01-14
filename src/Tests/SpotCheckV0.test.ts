@@ -27,8 +27,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
@@ -42,8 +40,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
@@ -56,8 +52,6 @@ describe('SpotCheckV0 Suite', function () {
     const testRunner = createTestRunner('FailWithoutThread.ts');
 
     await testRunner.runAsync();
-
-    console.log(testRunner.stdout);
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
@@ -76,8 +70,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([
@@ -95,8 +87,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([]);
@@ -110,8 +100,6 @@ describe('SpotCheckV0 Suite', function () {
     const testRunner = createTestRunner('PassWithThread.ts');
 
     await testRunner.runAsync();
-
-    console.log(testRunner.stdout);
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);

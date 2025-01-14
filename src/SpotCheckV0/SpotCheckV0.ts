@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { DiffReportCollector } from './DiffReportCollector';
 import { PullRequestHandler } from './PullRequestHandler';
 import { IDiffTestReport } from './Report/DiffReport';
+import { ILogger } from './Report/ILogger';
 
 function throwExpression(errorMessage: string): never {
     throw new Error(errorMessage);
@@ -12,9 +13,11 @@ function throwExpression(errorMessage: string): never {
 
  (async function() {
      try {
-        const [ input, artifactName, type, baseDir ] = [
+        const [ input, output, artifactName, screenshotFolder, type, baseDir ] = [
             [ 'input', '', 'specify a report file for "input"' ],
+            [ 'output', 'diff-report.json' ],
             [ 'artifactName', 'screenshots' ],
+            [ 'screenshotFolder', '' ],
             [ 'type', 'robot' ],
             [ 'baseDir', path.dirname(tl.getInput('input', false) ?? '') ],
         ]
@@ -24,16 +27,25 @@ function throwExpression(errorMessage: string): never {
                     ? throwExpression(errorMessage)
                     : defaultValue));
 
-        const diffReportCollector = new DiffReportCollector();
-
         tl.debug(`type: ${type}`);
         tl.debug(`baseDir: ${baseDir}`);
+        tl.debug(`output: ${output}`);
+        tl.debug(`screenshotFolder: ${screenshotFolder}`);
+
+        const skipFeedback = tl.getBoolInput('skipFeedback', false);
+        const taskLogger: ILogger = skipFeedback ? {
+            error: (_) => {},
+            info: (_) => {}
+        } : {
+            error: (message) => tl.warning(message),
+            info: (message) => tl.debug(message)
+        };
 
         let diffReport: IDiffTestReport;
         switch (type) {
             case 'robot':
 
-                diffReport = await new RobotFileParser(input, baseDir)
+                diffReport = await new RobotFileParser(input, baseDir, taskLogger)
                     .createDiffReport();
 
                 break;
@@ -48,10 +60,11 @@ function throwExpression(errorMessage: string): never {
                 throw new Error(`"type" should be "robot" or "cypress", but was "${type}"`);
         }
         
-        const output = await diffReportCollector.collectReport(baseDir, diffReport);
-        tl.uploadArtifact('', output, artifactName);
+        const diffReportCollector = new DiffReportCollector(output, screenshotFolder, taskLogger);
 
-        const skipFeedback = tl.getBoolInput('skipFeedback', false);
+        const outputPath = await diffReportCollector.collectReport(baseDir, diffReport);
+        tl.uploadArtifact('', outputPath, artifactName);
+
         if (!skipFeedback) {
             const prHandler = new PullRequestHandler(tl);
             prHandler.processFeedback(diffReport);

@@ -23,12 +23,28 @@
             "helpMarkDown": "Robot or Cypress report"
         },
         {
+            "name": "output",
+            "type": "string",
+            "label": "Output json",
+            "defaultValue": "diff-report.json",
+            "required": false,
+            "helpMarkDown": "Visual diff report name"
+        },
+        {
             "name": "baseDir",
             "type": "filePath",
             "label": "Report file",
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "Folder path to screenshots. Defaults to report folder."
+        },
+        {
+            "name": "screenshotFolder",
+            "type": "string",
+            "label": "Screenshot folder",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Relative offset of screenshot folder from report. Defaults to empty string."
         },
         {
             "name": "type",

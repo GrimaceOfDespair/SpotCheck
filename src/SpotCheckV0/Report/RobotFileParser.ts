@@ -9,6 +9,7 @@ import { ReportContext } from "../ReportContext";
 import { IDiffSuite, IDiffTest, IDiffTestReport } from "./DiffReport";
 import { ImageProcessor } from "../ImageProcessor";
 import { RobotReportRecorder } from "./RobotReportRecorder";
+import { ILogger, NullLogger } from "./ILogger";
 
 export class RobotFileParser {
 
@@ -16,10 +17,12 @@ export class RobotFileParser {
 
     private _context: ReportContext;
     private _images: ImageProcessor = new ImageProcessor();
+    private _logger: ILogger;
 
-    constructor(reportFile: string, baseDir?: string) {
+    constructor(reportFile: string, baseDir?: string, logger?: ILogger) {
         this._context = new ReportContext(reportFile,
             baseDir ?? path.dirname(reportFile));
+        this._logger = logger ?? NullLogger;
     }
 
     async createDiffReport(): Promise<IDiffTestReport> {
@@ -96,7 +99,7 @@ export class RobotFileParser {
             failureThreshold = this.defaultThreshold;
         }
 
-        console.info(`Comparing '${baselinePath.absolute}' with '${comparisonPath.absolute}' with threshold ${Math.round(failureThreshold * 100)}% and writing output to ${diffPath.absolute}`);
+        this._logger.info(`Comparing '${baselinePath.absolute}' with '${comparisonPath.absolute}' with threshold ${Math.round(failureThreshold * 100)}% and writing output to ${diffPath.absolute}`);
     
         const { percentage, testFailed } = await this._images.compareImage(
             baselinePath.absolute,
@@ -105,9 +108,9 @@ export class RobotFileParser {
             failureThreshold);
 
         if (testFailed) {
-            console.error(`Failed with ${Math.round(percentage * 100)}% difference`);
+            this._logger.error(`Failed with ${Math.round(percentage * 100)}% difference`);
         } else {
-            console.info(`Passed with ${Math.round(percentage * 100)}% difference`);
+            this._logger.info(`Passed with ${Math.round(percentage * 100)}% difference`);
         }
     
         return {
