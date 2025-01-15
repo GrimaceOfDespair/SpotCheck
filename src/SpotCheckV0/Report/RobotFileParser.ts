@@ -89,8 +89,6 @@ export class RobotFileParser {
                 ({
                     relative: this._context.resolveRelative(version, imageNameOnDisk),
                     absolute: this._context.resolveAbsolute(version, imageNameOnDisk),
-                    //relative: [relativeFolder, version, imageNameOnDisk].filter(Boolean).join('/'),
-                    //absolute: [this._context.basePath, imageFolderOnDisk, version, imageNameOnDisk].filter(Boolean).join('/')
                 })
             );
     
