@@ -1,14 +1,14 @@
 import path from 'node:path';
 import { RobotFileParser } from '../SpotCheckV0/Report/RobotFileParser';
 import { ILogger } from '../SpotCheckV0/Report/ILogger';
-import { Temp } from '../SpotCheckV0/Temp';
+import  { Mirror } from './Mirror';
 
 describe('RobotFileParser', () => {
   
   let reportBase: string = '';
 
   beforeAll(async () => {
-    reportBase = await Temp.createMirror('../Tests/reports');
+    reportBase = await Mirror.createMirror('../Tests/reports');
   });
   
   test('Parse robot file with screenshot in 1 test', async () => {

@@ -4,6 +4,8 @@ export interface ILogger {
 }
 
 export const NullLogger: ILogger = {
+    /* istanbul ignore next */
     info: (_) => {},
+    /* istanbul ignore next */
     error: (_) => {},
 }

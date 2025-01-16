@@ -42,7 +42,11 @@ describe('SpotCheckV0 Suite', function () {
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
-    expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
+    expect(testRunner.warningIssues).toEqual([
+      'Failed with 3% difference',
+      '1 screenshot(s) not matching baseline (http://example.com/tfs/FakeTeam/_build/results?buildId=666&view=IgorKalders.spotcheck.spotcheck-build)',
+      'No pull request found to update'
+    ]);
     expect(testRunner.isUploaded('screenshots'));
 
   }, 30 * 1000);

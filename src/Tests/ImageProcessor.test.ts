@@ -1,14 +1,14 @@
 import { ImageProcessor } from "../SpotCheckV0/ImageProcessor";
 import path from 'node:path';
 import fs from 'node:fs';
-import { Temp } from "../SpotCheckV0/Temp";
+import { Mirror } from "./Mirror";
 
 describe('ImageProcessor', () => {
 
   let imageBase: string = '';
 
   beforeAll(async () => {
-    imageBase = await Temp.createMirror('../Tests/images');
+    imageBase = await Mirror.createMirror('../Tests/images');
   });
   
   test('Load image by relative path', async () => {
