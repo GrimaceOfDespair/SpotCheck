@@ -119,4 +119,42 @@ describe('SpotCheckContent', () => {
         const leftImageWidth = getComputedStyle(leftImage).width;
         expect(leftImageWidth).toBe("60%");
     });
+
+    test('SpotCheckContent - drag splitter with touch', async () => {
+
+        render(<SpotCheckContent />);
+
+        const suite = await screen.findByText(/\bListsandstaticsegments_dup\b/i, { selector: '.primary-text' });
+        await userEvent.click(suite);
+
+        const test = await screen.findByText(/\bCreate_List_dup\b/i);
+        await userEvent.click(test);
+
+        const screenshots = await screen.findByRole('heading', { name: 'Create_List_dup' });
+        expect(screenshots).toBeInTheDocument();
+
+        const leftImage = await screen.findByTestId('splitter-left');
+        expect(leftImage).toBeInTheDocument();
+
+        jest.spyOn(leftImage,'getBoundingClientRect').mockReturnValue({
+            width: 50,
+        } as DOMRect);
+        
+        const container = await screen.findByTestId('splitter-container');
+        expect(container).toBeInTheDocument();
+
+        jest.spyOn(container,'getBoundingClientRect').mockReturnValue({
+            width: 100,
+        } as DOMRect);
+        
+        const splitter = await screen.findByTestId('splitter-handle');
+        expect(splitter).toBeInTheDocument();
+
+        fireEvent.touchStart(splitter, { touches: [{ clientX: 0, clientY: 0 }] });
+        fireEvent.touchMove(splitter, { touches: [{ clientX: 10, clientY: 0 }] });
+        fireEvent.touchEnd(splitter, { touches: [{ clientX: 10, clientY: 0 }] });
+
+        const leftImageWidth = getComputedStyle(leftImage).width;
+        expect(leftImageWidth).toBe("60%");
+    });
 })
