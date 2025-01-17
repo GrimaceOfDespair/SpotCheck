@@ -37,43 +37,37 @@ describe('SpotCheckContent', () => {
 
     test('SpotCheckContent - rendering', async () => {
 
-        const { unmount } = render(<SpotCheckContent />);
+        render(<SpotCheckContent />);
 
         expect(screen.getByText(/Loading report/i)).toBeDefined();
 
         expect(await screen.findByText(/\bListsandstaticsegments\b/i, { selector: '.primary-text' })).toBeInTheDocument();
-        
-        unmount();
     });
 
     test('SpotCheckContent - load build', async () => {
 
-        const { unmount } = render(<SpotCheckContent />);
+        render(<SpotCheckContent />);
         
         expect(await screen.findByText(/\bListsandstaticsegments\b/i, { selector: '.primary-text' })).toBeInTheDocument();
         expect(await screen.findByText(/\bListsandstaticsegments_dup\b/i, { selector: '.primary-text' })).toBeInTheDocument();
 
         expect(await screen.queryByText(/\bCreate_List\b/i)).toBeInTheDocument();
         expect(await screen.queryByText(/\bCreate_List_dup\b/i)).not.toBeInTheDocument();
-        
-        unmount();
     });
 
     test('SpotCheckContent - select build', async () => {
 
-        const { unmount } = render(<SpotCheckContent />);
+        render(<SpotCheckContent />);
 
         const suite = await screen.findByText(/\bListsandstaticsegments_dup\b/i, { selector: '.primary-text' });
         await userEvent.click(suite);
 
         expect(await screen.findByText(/\bCreate_List_dup\b/i)).toBeInTheDocument();
-
-        unmount();
     });
 
     test('SpotCheckContent - select test', async () => {
 
-        const { unmount } = render(<SpotCheckContent />);
+        render(<SpotCheckContent />);
 
         const suite = await screen.findByText(/\bListsandstaticsegments_dup\b/i, { selector: '.primary-text' });
         await userEvent.click(suite);
@@ -86,13 +80,11 @@ describe('SpotCheckContent', () => {
 
         const container = await screen.findByTestId('splitter-container');
         expect(container).toBeInTheDocument();
-
-        unmount();
     });
 
     test('SpotCheckContent - drag splitter with mouse', async () => {
 
-        const { unmount } = render(<SpotCheckContent />);
+        render(<SpotCheckContent />);
 
         const suite = await screen.findByText(/\bListsandstaticsegments_dup\b/i, { selector: '.primary-text' });
         await userEvent.click(suite);
@@ -126,7 +118,5 @@ describe('SpotCheckContent', () => {
 
         const leftImageWidth = getComputedStyle(leftImage).width;
         expect(leftImageWidth).toBe("60%");
-        
-        unmount();
     });
 })
