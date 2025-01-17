@@ -71,7 +71,7 @@ export const ImageSplitter = ({ leftImage, rightImage }: ISplitterImages) => {
             return;
         }
 
-        const { width: containerWidth, height: containerHeight } = container.getBoundingClientRect();
+        const { width: containerWidth } = container.getBoundingClientRect();
         const delta = currentLeftWidth + dx;
         const newFirstHalfWidth = delta * 100 / containerWidth;
         firstHalfEle.style.width = `${newFirstHalfWidth}%`;
@@ -109,12 +109,13 @@ export const ImageSplitter = ({ leftImage, rightImage }: ISplitterImages) => {
     };
 
     return (
-        <div className="splitter" ref={containerRef as React.MutableRefObject<HTMLDivElement>}
+        <div data-testid="splitter-container" className="splitter" ref={containerRef as React.MutableRefObject<HTMLDivElement>}
             style={{backgroundImage: `url(${rightImage})`}}>
-            <div className="splitter__first" ref={firstHalfRef as React.MutableRefObject<HTMLDivElement>}
+            <div data-testid="splitter-left" className="splitter__first" ref={firstHalfRef as React.MutableRefObject<HTMLDivElement>}
                 style={{ backgroundImage: `url(${leftImage})`}}>
             </div>
             <div
+                data-testid="splitter-handle" 
                 className="splitter__resizer"
                 ref={resizerRef as React.MutableRefObject<HTMLDivElement>}
                 onMouseDown={handleMouseDown}

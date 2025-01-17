@@ -107,6 +107,7 @@ const testColumns: Array<ITableColumn<ITest>> = [
         width: new ObservableValue(-33),
         renderCell: (_, columnIndex, testColumn, test) =>
             <ImageStatusCell
+                key={`comparison-${test.name}`}
                 columnIndex={columnIndex}
                 testColumn={testColumn}
                 test={test}></ImageStatusCell>,
@@ -117,6 +118,7 @@ const testColumns: Array<ITableColumn<ITest>> = [
         width: new ObservableValue(-33),
         renderCell: (_, columnIndex, testColumn, test) =>
             <ImageCell
+                key={`diff-${test.name}`}
                 columnIndex={columnIndex}
                 testColumn={testColumn}
                 test={test}
@@ -128,6 +130,7 @@ const testColumns: Array<ITableColumn<ITest>> = [
         width: new ObservableValue(-33),
         renderCell: (_, columnIndex, testColumn, test) =>
             <ImageCell
+                key={`baseline-${test.name}`}
                 columnIndex={columnIndex}
                 testColumn={testColumn}
                 test={test}

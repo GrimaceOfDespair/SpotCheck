@@ -20,7 +20,7 @@
           "diffPath": ""
         },
         {
-          "name": "Create_List",
+          "name": "Create_List_Without_Threshold",
           "specPath": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
           "specFilename": "X:\\Tests\\Automation\\test_suites\\89_sanitychecks\\listsandstaticsegments.robot",
           "status": "fail",

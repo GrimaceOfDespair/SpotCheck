@@ -27,10 +27,11 @@ import { ISuite, IPanelContentState } from "./Models";
 import "./SpotCheck.scss";
 import { getBuildReport } from "./SuiteData";
 import { TestTable } from "./TestTable";
-
-var Suites: ISuite[] = [] as ISuite[];
+import { SuiteList } from './SuiteList';
 
 export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
+
+    _suites: ISuite[] = [];
 
     constructor(props: {}) {
         super(props);
@@ -45,7 +46,7 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
         const state = await getBuildReport();
 
         if (state.report) {
-            Suites = state.report.suites;
+            this._suites = state.report.suites;
         }
 
         this.setState(state);
@@ -74,96 +75,41 @@ export class SpotCheckContent extends React.Component<{}, IPanelContentState> {
                 }
         }
 
+        const suiteContext: IMasterDetailsContextLayer<ISuite, undefined> = {
+            key: "initial",
+            masterPanelContent: {
+                hideBackButton: true,
+                renderContent: (_, suite) => (
+                    <SuiteList suites={this._suites} suite={suite} />
+                ),
+                renderHeader: () => <MasterPanelHeader title={"Suites"} />,
+            },
+            detailsContent: {
+                renderContent: (suite) => (
+                    <ConditionalChildren renderChildren={!!suite}>
+                        <TestTable
+                            suite={suite}
+                            suiteContext={suiteContext}
+                            onShowDetails={(doShow) =>
+                                reportContext.setDetailsPanelVisbility(doShow)}
+                        ></TestTable>
+                    </ConditionalChildren>
+                ),
+            },
+            selectedMasterItem: new ObservableValue<ISuite>(this._suites[0]),
+            parentItem: undefined,
+        };
+        
+        const reportContext: IMasterDetailsContext = new BaseMasterDetailsContext(
+            suiteContext,
+            () => { /* onExit */ }
+        );
+        
         return <MasterDetailsContext.Provider value={reportContext}>
                 <MasterPanel className="master-example-panel" />
                 <DetailsPanel />
             </MasterDetailsContext.Provider>
     }
 }
-
-const SuiteList: React.FunctionComponent<{
-    suite: IObservableValue<ISuite>;
-}> = ({ suite }) => {
-
-    const [initialItemProvider] = React.useState(new ArrayItemProvider(Suites));
-    const [initialSelection] = React.useState(new ListSelection({ selectOnFocus: false }));
-    const masterDetailsContext = React.useContext(MasterDetailsContext);
-
-    React.useEffect(() => {
-        bindSelectionToObservable(
-            initialSelection,
-            initialItemProvider,
-            suite
-        );
-    });
-
-    return <List
-            ariaLabel={"Engineering master list"}
-            itemProvider={initialItemProvider}
-            selection={initialSelection}
-            width="100%"
-            onSelect={() =>
-                masterDetailsContext.setDetailsPanelVisbility(true)}
-            renderRow={(index, item, details) =>
-                <SuiteDetails
-                    index={index}
-                    item={item}
-                    details={details}>
-                </SuiteDetails>}
-        ></List>
-};
-
-const SuiteDetails: React.FunctionComponent<{
-    index: number,
-    item: ISuite,
-    details: IListItemDetails<ISuite>,
-}> = ({ item, index, details }) =>
-
-    <ListItem
-        className="master-example-row"
-        key={"list-item" + index}
-        index={index}
-        details={details}>
-        <div className="master-example-row-content flex-row flex-center h-scroll-hidden">
-            <div className="flex-column text-ellipsis">
-                <Tooltip overflowOnly={true}>
-                    <div className="primary-text text-ellipsis">{item.name}</div>
-                </Tooltip>
-                <Tooltip overflowOnly={true}>
-                    <div className="secondary-text text-ellipsis">✔️ {item.pass} ❌ {item.fail}</div>
-                </Tooltip>
-            </div>
-        </div>
-    </ListItem>
-
-const suiteContext: IMasterDetailsContextLayer<ISuite, undefined> = {
-    key: "initial",
-    masterPanelContent: {
-        hideBackButton: true,
-        renderContent: (_, suite) => (
-            <SuiteList suite={suite} />
-        ),
-        renderHeader: () => <MasterPanelHeader title={"Suites"} />,
-    },
-    detailsContent: {
-        renderContent: (suite) => (
-            <ConditionalChildren renderChildren={!!suite}>
-                <TestTable
-                    suite={suite}
-                    suiteContext={suiteContext}
-                    onShowDetails={(doShow) =>
-                        reportContext.setDetailsPanelVisbility(doShow)}
-                ></TestTable>
-            </ConditionalChildren>
-        ),
-    },
-    selectedMasterItem: new ObservableValue<ISuite>(Suites[0]),
-    parentItem: undefined,
-};
-
-const reportContext: IMasterDetailsContext = new BaseMasterDetailsContext(
-    suiteContext,
-    () => { /* onExit */ }
-);
 
 showRootComponent(<SpotCheckContent />);
