@@ -15,6 +15,7 @@ import React from 'react';
 import fs from 'node:fs';
 
 import { SpotCheckContent } from '../SpotCheck/SpotCheck';
+import { messages } from '../__mocks__/azure-devops-extension-sdk';
 import JSZip from 'jszip';
 
 global.fetch = async (request: string | Request | URL): Promise<Response> => {
@@ -157,4 +158,31 @@ describe('SpotCheckContent', () => {
         const leftImageWidth = getComputedStyle(leftImage).width;
         expect(leftImageWidth).toBe("60%");
     });
+
+    test('SpotCheckContent - set baseline', async () => {
+
+        messages.length = 0;
+
+        render(<SpotCheckContent />);
+
+        const suite = await screen.findByText(/\bListsandstaticsegments\b/i, { selector: '.primary-text' });
+        await userEvent.click(suite);
+
+        const test = await screen.findByText(/\Create_List_Without_Threshold\b/i);
+        await userEvent.click(test);
+
+        const screenshots = await screen.findByRole('heading', { name: 'Create_List_Without_Threshold' });
+        expect(screenshots).toBeInTheDocument();
+
+        const baseline = await screen.findByText(/\bBaseline\b/i);
+        await userEvent.click(baseline);
+
+        const { message, okAction } = messages[0];
+        expect(message).toBe('Set this screenshot as the new baseline for Create_List_Without_Threshold?');
+        await okAction();
+
+        const { message: confirmation } = messages[1];
+        expect(confirmation).toBe('Updated the new baseline image of "Create_List_Without_Threshold. http://example.com/tfs/FakeTeam/ProjectX/_git/FakeRepo/pushes/123"');
+    });
+
 })
