@@ -121,8 +121,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([]);
