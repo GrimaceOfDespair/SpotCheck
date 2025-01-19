@@ -1,4 +1,4 @@
-import { CommonServiceIds, IGlobalMessageBanner, IMessageDialogOptions, IProjectInfo } from "azure-devops-extension-api/Common";
+import { CommonServiceIds, IDocumentOptions, IGlobalMessageBanner, IMessageDialogOptions, IProjectInfo } from "azure-devops-extension-api/Common";
 import { BuildServiceIds, IBuildPageData } from "azure-devops-extension-api/Build";
 import { IBuildConfiguration } from "../Config/Models";
 
@@ -90,6 +90,9 @@ const getExtensionDataManager = jest.fn(dataManager => ({
             default:
                 return {};
         }
+    },
+    async setValue<T>(key: string, value: T, documentOptions?: IDocumentOptions): Promise<T> {
+        return value;
     }
 }));
 

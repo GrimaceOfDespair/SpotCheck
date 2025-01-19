@@ -123,7 +123,7 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
             type: ListBoxItemType.Row,
         }));
     
-        this.loadBuildConfigurations();
+        await this.loadBuildConfigurations();
     }
 
     private async loadBuildConfigurations() {
