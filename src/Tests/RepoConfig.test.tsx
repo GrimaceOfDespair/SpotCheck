@@ -89,4 +89,41 @@ describe('RepoConfig', () => {
         expect(gitFolder1['value']).toBe('/path/to/git');
         expect(gitFolder2['value']).toBe('');
     });
+
+    test('RepoConfig - delete and save configuration', async () => {
+
+        render(<RepoConfig />);
+
+        const [gitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
+        expect(gitFolder['value']).toBe('/path/to/git');
+
+        const [remove,] = await screen.findAllByLabelText(/Remove configuration/i);
+        expect(remove).toBeInTheDocument();
+        fireEvent.click(remove);
+
+        const save = await screen.findByText(/Save/);
+        fireEvent.click(save);
+
+        const [deletedGitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
+        expect(deletedGitFolder['value']).toBe('');
+    });
+
+
+    test('RepoConfig - delete and reset configuration', async () => {
+
+        render(<RepoConfig />);
+
+        const [gitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
+        expect(gitFolder['value']).toBe('/path/to/git');
+
+        const [remove,] = await screen.findAllByLabelText(/Remove configuration/i);
+        expect(remove).toBeInTheDocument();
+        fireEvent.click(remove);
+
+        const reset = await screen.findByText(/Reset/);
+        fireEvent.click(reset);
+
+        const [resetGitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
+        expect(resetGitFolder['value']).toBe('/path/to/git');
+    });
 });
