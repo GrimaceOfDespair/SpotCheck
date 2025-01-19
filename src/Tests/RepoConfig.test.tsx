@@ -12,6 +12,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import fs from 'node:fs';
 import { RepoConfig } from '../Config/RepoConfig';
+import { messages } from '../__mocks__/azure-devops-extension-sdk';
 
 jest.mock('../Common');
 
@@ -25,6 +26,10 @@ describe('RepoConfig', () => {
 
     afterAll(() =>
         confirmSpy.mockRestore());
+
+    beforeEach(() => {
+        messages.length = 0;
+    });
 
     test('RepoConfig - rendering', async () => {
 
@@ -60,6 +65,9 @@ describe('RepoConfig', () => {
         const [gitFolder1, gitFolder2] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
         expect(gitFolder1['value']).toBe('/path/to/git');
         expect(gitFolder2['value']).toBe('src/tests');
+
+        const [{ message }] = messages;
+        expect(message).toBe('Configuration saved');
     });
 
     test('RepoConfig - add and cancel configuration', async () => {
@@ -88,6 +96,9 @@ describe('RepoConfig', () => {
         const [gitFolder1, gitFolder2] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
         expect(gitFolder1['value']).toBe('/path/to/git');
         expect(gitFolder2['value']).toBe('');
+
+        const [{ message }] = messages;
+        expect(message).toBe('Stored configuration reloaded');
     });
 
     test('RepoConfig - delete and save configuration', async () => {
@@ -106,6 +117,9 @@ describe('RepoConfig', () => {
 
         const [deletedGitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
         expect(deletedGitFolder['value']).toBe('');
+
+        const [{ message }] = messages;
+        expect(message).toBe('Configuration saved');
     });
 
 
@@ -125,5 +139,8 @@ describe('RepoConfig', () => {
 
         const [resetGitFolder] = await screen.findAllByLabelText(/Git folder with baseline screenshots/i);
         expect(resetGitFolder['value']).toBe('/path/to/git');
+
+        const [{ message }] = messages;
+        expect(message).toBe('Stored configuration reloaded');
     });
 });
