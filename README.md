@@ -21,13 +21,18 @@ describe('Visuals', () => {
 ```
 
 Or a custom keyword in [Robot Framework](https://robotframework.org/robotframework/latest/libraries/Screenshot.html#Take%20Screenshot)
-_TODO: document how to create keyword_
 
 ``` robot
 *** Test Cases ***
-Visit Google
-  Go To  www.google.com
-  Compare Snapshot  home-page  0.1
+Visit Example
+  Go To  http://www.example.com
+  Wait Until Element Is Enabled  //h1
+  Compare Snapshot  example_homepage  0.1
+
+*** Keywords ***
+Compare Snapshot
+  [Arguments]  ${FileName}  ${Threshold}=0.1
+  Capture Page Screenshot  ${FileName}.png
 ```
 
 Generate the Cypress or Robot report within a pipeline, then use SpotCheck to process the report.
