@@ -177,4 +177,43 @@ describe('RobotFileParser', () => {
     })
 
   }, 30_000);
+
+  test('Parse robot file with nested keyword', async () => {
+
+    // Arrange
+    const parser = new RobotFileParser('../Tests/reports/output-nested.xml');
+
+    // Act
+    const robotReport = await parser.createDiffReport();
+
+    // Assert
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test] = robotReport.suites[0].tests;
+
+    expect(test.name).toBe('Create_List');
+    expect(test.comparisonPath).toBe('Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png');
+    expect(test.failureThreshold).toBe(.1);
+
+  }, 30_000);
+  
+  test('Parse robot file with nested keyword without normalization', async () => {
+
+    // Arrange
+    const parser = new RobotFileParser('../Tests/reports/output-nested.xml');
+
+    // Act
+    const robotReport = await parser.createDiffReport(false);
+
+    // Assert
+    expect(robotReport.suites.length).toBe(1);
+
+    const [test] = robotReport.suites[0].tests;
+
+    expect(test.name).toBe('Create_List');
+    expect(test.comparisonPath).toBe('Test Suites.89 Sanitychecks.Listsandstaticsegments/Lists Dashboard.png');
+    expect(test.failureThreshold).toBe(.1);
+
+  }, 30_000);
+
 })

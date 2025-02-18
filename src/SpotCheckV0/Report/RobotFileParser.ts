@@ -25,9 +25,9 @@ export class RobotFileParser {
         this._logger = logger ?? NullLogger;
     }
 
-    async createDiffReport(): Promise<IDiffTestReport> {
+    async createDiffReport(normalizePaths: boolean = true): Promise<IDiffTestReport> {
 
-        const testSuites = await this.readTestSuites();
+        const testSuites = await this.readTestSuites(normalizePaths);
         
         return await this.parseScreenshots(testSuites);
     }
@@ -58,18 +58,12 @@ export class RobotFileParser {
         };
     }
 
-    private async readTestSuites() {
+    private async readTestSuites(normalizePaths: boolean) {
 
         const reportStream = createReadStream(this._context.reportFile);
         const saxParser = sax.createStream(true);
 
-        const testContext = {
-            suite: [],
-            test: '',
-            keyword: '',
-        };
-
-        const suiteRecorder = new RobotReportRecorder();
+        const suiteRecorder = new RobotReportRecorder(normalizePaths);
         const saxPath = new SaXPath(saxParser, `//test//kw[@name="Compare Snapshot"]`, suiteRecorder);
         reportStream.pipe(saxParser);
 

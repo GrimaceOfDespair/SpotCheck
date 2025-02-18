@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 4.1 (Python 3.8.10 on win32)" generated="20241230 08:15:42.580" rpa="false" schemaversion="2">
+<suite id="s1" name="Test Suites" source="X:\Tests\Automation\test_suites">
+<suite id="s1-s1" name="89 Sanitychecks" source="X:\Tests\Automation\test_suites\89_sanitychecks">
+<suite id="s1-s1-s1" name="Listsandstaticsegments" source="X:\Tests\Automation\test_suites\89_sanitychecks\listsandstaticsegments.robot">
+<test id="s1-s1-s1-t1" name="Create_List">
+<kw name="Compare Snapshot" library="utils.logger">
+<arg>Lists Dashboard</arg>
+<arg>.10</arg>
+<doc>captures a screenshot and logs the console log of the dev tools</doc>
+<kw name="Capture Page Screenshot"
+library="SeleniumLibrary">
+<arg>${FileName}.png</arg>
+<doc>Takes a screenshot of the current page and embeds it into a log file.</doc>
+<msg timestamp="20241230 08:16:32.185" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="screenshots/Test%20Suites.89%20Sanitychecks.Listsandstaticsegments/Lists_Dashboard.png"&gt;&lt;img src="screenshots/Test%20Suites.89%20Sanitychecks.Listsandstaticsegments/Lists_Dashboard.png" width="800px"&gt;&lt;/a&gt;</msg>
+<status status="PASS" starttime="20241230 08:16:32.039" endtime="20241230 08:16:32.185" />
+</kw>
+<status status="PASS" starttime="20241230 08:16:32.037" endtime="20241230 08:16:32.185"/>
+</kw>
+<doc>sanity check to create a list</doc>
+<tag>FOCUS</tag>
+<tag>LISTS</tag>
+<tag>OWNER-ADA</tag>
+<tag>SANITY</tag>
+<status status="FAIL" starttime="20241230 08:16:20.601" endtime="20241230 08:17:47.198">Wait Until With For Loop: Element //*[@sg-qa-id="lists-list-name"]/a[normalize-space()='SanityUserList1735542964'] was not found</status>
+</test>
+<doc>Tests to validate that the content creation/publish working</doc>
+<status status="FAIL" starttime="20241230 08:16:03.934" endtime="20241230 08:17:53.126"/>
+</suite>
+<status status="FAIL" starttime="20241230 08:16:03.931" endtime="20241230 08:17:53.126"/>
+</suite>
+<status status="FAIL" starttime="20241230 08:15:42.592" endtime="20241230 08:17:54.131"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="0" fail="1" skip="0">FOCUS</stat>
+<stat pass="0" fail="1" skip="0">LISTS</stat>
+<stat pass="0" fail="1" skip="0">OWNER-ADA</stat>
+<stat pass="0" fail="1" skip="0">SANITY</stat>
+</tag>
+<suite>
+<stat pass="0" fail="1" skip="0" id="s1" name="Test Suites">Test Suites</stat>
+<stat pass="0" fail="1" skip="0" id="s1-s1" name="89 Sanitychecks">Test Suites.89 Sanitychecks</stat>
+<stat pass="0" fail="1" skip="0" id="s1-s1-s1" name="Listsandstaticsegments">Test Suites.89 Sanitychecks.Listsandstaticsegments</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
