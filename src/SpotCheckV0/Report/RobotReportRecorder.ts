@@ -34,6 +34,7 @@ export class RobotReportRecorder implements SaxParserRecorder {
             ? screenshot
             : screenshot
                 .replace(/ /g, '_')
+                .replace(/\//g, '.')
                 .replace(/[^-\w.]/g, '');
 
     start(_: State) {
