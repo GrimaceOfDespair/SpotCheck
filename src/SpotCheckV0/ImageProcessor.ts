@@ -1,6 +1,7 @@
 import { PNG } from 'pngjs';
 import { createReadStream, createWriteStream } from "node:fs";
 import path from 'node:path';
+import fs from 'node:fs';
 import Pixelmatch from 'pixelmatch';
 
 export class ImageProcessor {
@@ -95,6 +96,7 @@ export class ImageProcessor {
         const testFailed = percentage > threshold;
 
         if (testFailed) {
+            await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
             diffImg.pack().pipe(createWriteStream(
                 this.normalize(diffPath)));
         }

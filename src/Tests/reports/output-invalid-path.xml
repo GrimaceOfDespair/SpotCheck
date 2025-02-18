@@ -5,18 +5,11 @@
 <suite id="s1-s1-s1" name="Listsandstaticsegments" source="X:\Tests\Automation\test_suites\89_sanitychecks\listsandstaticsegments.robot">
 <test id="s1-s1-s1-t1" name="Create_List">
 <kw name="Compare Snapshot" library="utils.logger">
-<arg>Lists Dashboard</arg>
-<arg>.01</arg>
+<arg>=%([Lists Dashboard])%=</arg>
+<arg>.10</arg>
 <doc>captures a screenshot and logs the console log of the dev tools</doc>
 <msg timestamp="20241230 08:16:32.185" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png"&gt;&lt;img src="screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png" width="800px"&gt;&lt;/a&gt;</msg>
 <msg timestamp="20241230 08:16:32.185" level="INFO">Capturing screenshot Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png with threshold 0.1 in folder screenshots</msg>
-<status status="PASS" starttime="20241230 08:16:32.037" endtime="20241230 08:16:32.185"/>
-</kw>
-<kw name="Compare Snapshot" library="utils.logger">
-<arg>Lists Dashboard Without Threshold</arg>
-<doc>captures a screenshot and logs the console log of the dev tools</doc>
-<msg timestamp="20241230 08:16:32.185" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png"&gt;&lt;img src="screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png" width="800px"&gt;&lt;/a&gt;</msg>
-<msg timestamp="20241230 08:16:32.185" level="INFO">Capturing screenshot Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png with threshold 0.1 in folder screenshots</msg>
 <status status="PASS" starttime="20241230 08:16:32.037" endtime="20241230 08:16:32.185"/>
 </kw>
 <doc>sanity check to create a list</doc>

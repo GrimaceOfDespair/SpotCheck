@@ -1,26 +1,22 @@
 import * as SDK from "azure-devops-extension-sdk";
 
-import { IReadonlyObservableArray, IReadonlyObservableValue, ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
+import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import  { EditableDropdown } from 'azure-devops-ui/EditableDropdown';
 import { IListBoxItem, ListBoxItemType } from "azure-devops-ui/ListBox";
-import  { Observer } from 'azure-devops-ui/Observer';
 import * as React from "react";
 import { IPanelConfigState, IBuildConfiguration } from "./Models";
-import { CommonServiceIds, IExtensionDataService, IProjectPageService, getClient } from "azure-devops-extension-api";
-import { BuildRestClient } from "azure-devops-extension-api/Build";
-import { GitRestClient } from "azure-devops-extension-api/Git";
+import { CommonServiceIds, IExtensionDataService, IProjectPageService } from "azure-devops-extension-api";
+import { getClient } from "azure-devops-extension-api/Common";
 import { TextField, TextFieldWidth } from "azure-devops-ui/TextField";
 import { Page } from "azure-devops-ui/Page";
-import { CustomHeader, Header, HeaderDescription, HeaderIcon, HeaderTitle, HeaderTitleArea, HeaderTitleRow, TitleSize } from "azure-devops-ui/Header";
+import { CustomHeader, HeaderDescription, HeaderIcon, HeaderTitle, HeaderTitleArea, HeaderTitleRow, TitleSize } from "azure-devops-ui/Header";
 import { Surface, SurfaceBackground } from "azure-devops-ui/Surface";
 import { Card } from "azure-devops-ui/Card";
-import { ITableBreakpoint, ITableColumn, SimpleTableCell, Table, TableCell } from "azure-devops-ui/Table";
-import { IItemProvider, ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+import { ITableColumn, SimpleTableCell, Table } from "azure-devops-ui/Table";
+import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { Button } from "azure-devops-ui/Button";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
-import { ScreenBreakpoints } from "azure-devops-ui/Core/Util/Screen";
 import { ConditionalChildren } from "azure-devops-ui/ConditionalChildren";
-import { Status, StatusSize } from "azure-devops-ui/Status";
 import { HeaderCommandBar, IHeaderCommandBarItem } from "azure-devops-ui/HeaderCommandBar";
 import { BuildDefinitionsClient } from "./BuildDefinitionClient";
 import { showInfo } from "../SpotCheck/Common";
@@ -127,7 +123,7 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
             type: ListBoxItemType.Row,
         }));
     
-        this.loadBuildConfigurations();
+        await this.loadBuildConfigurations();
     }
 
     private async loadBuildConfigurations() {
@@ -154,8 +150,6 @@ export class RepoConfig extends React.Component<{}, IPanelConfigState> {
     }
 
     public render(): JSX.Element {
-
-        console.log('render');
 
         //const disabled = JSON.stringify(this.storedBuildConfiguration) == JSON.stringify(this.buildConfigurations.value);
         const disabled = false;

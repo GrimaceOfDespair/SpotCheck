@@ -27,8 +27,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
@@ -42,11 +40,13 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
-    expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
+    expect(testRunner.warningIssues).toEqual([
+      'Failed with 3% difference',
+      '1 screenshot(s) not matching baseline (http://example.com/tfs/FakeTeam/_build/results?buildId=666&view=IgorKalders.spotcheck.spotcheck-build)',
+      'No pull request found to update'
+    ]);
     expect(testRunner.isUploaded('screenshots'));
 
   }, 30 * 1000);
@@ -72,8 +72,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([
@@ -91,8 +89,6 @@ describe('SpotCheckV0 Suite', function () {
     const testRunner = createTestRunner('FailWithThread.ts');
 
     await testRunner.runAsync();
-
-    console.log(testRunner.stdout);
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
@@ -112,8 +108,6 @@ describe('SpotCheckV0 Suite', function () {
 
     await testRunner.runAsync();
 
-    console.log(testRunner.stdout);
-
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
     expect(testRunner.warningIssues).toEqual([]);
@@ -127,8 +121,6 @@ describe('SpotCheckV0 Suite', function () {
     const testRunner = createTestRunner('PassWithThread.ts');
 
     await testRunner.runAsync();
-
-    console.log(testRunner.stdout);
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);
@@ -159,8 +151,6 @@ describe('SpotCheckV0 Suite', function () {
     const testRunner = createTestRunner('FailSkipFeedback.ts');
 
     await testRunner.runAsync();
-
-    console.log(testRunner.stdout);
 
     expect(testRunner.stderr).toBe('');
     expect(testRunner.errorIssues).toEqual([]);

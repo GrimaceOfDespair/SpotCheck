@@ -15,8 +15,8 @@
           "status": "pass",
           "percentage": 1,
           "failureThreshold": 0.1,
-          "baselinePath": "baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
-          "comparisonPath": "Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
+          "baselinePath": "screenshots/baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
+          "comparisonPath": "screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard.png",
           "diffPath": ""
         },
         {
@@ -26,8 +26,8 @@
           "status": "pass",
           "percentage": 1,
           "failureThreshold": 0.05,
-          "baselinePath": "baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
-          "comparisonPath": "Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
+          "baselinePath": "screenshots/baseline/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
+          "comparisonPath": "screenshots/Test_Suites.89_Sanitychecks.Listsandstaticsegments.Lists_Dashboard_Without_Threshold.png",
           "diffPath": ""
         }
       ]

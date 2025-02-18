@@ -29,26 +29,12 @@ export class RobotReportRecorder implements SaxParserRecorder {
         }, <IRobotSuites>{});
     }
 
-    normalize(screenshot: string) {
-
-        let normalizedScreenshot = screenshot;
-        if (this.normalizePaths) {
-            normalizedScreenshot = screenshot
+    normalize = (screenshot: string) =>
+        !this.normalizePaths
+            ? screenshot
+            : screenshot
                 .replace(/ /g, '_')
-                .replace(/\//g, '.')
                 .replace(/[^-\w.]/g, '');
-        }
-
-        switch (normalizedScreenshot) {
-            case '':
-            case '.':
-            case '..':
-                throw new Error(`Cannot create file name from ${screenshot} as it results in ${normalizedScreenshot}`);
-
-            default:
-                return normalizedScreenshot;
-        }
-    }
 
     start(_: State) {
     }
@@ -127,12 +113,15 @@ export class RobotReportRecorder implements SaxParserRecorder {
         }
     }
 
+    /* istanbul ignore next */
     onCDATA(cdata: string) {
     }
 
+    /* istanbul ignore next */
     onOpenCDATA(tag: string) {
     }
 
+    /* istanbul ignore next */
     onCloseCDATA(tag: string) {
     }
 }

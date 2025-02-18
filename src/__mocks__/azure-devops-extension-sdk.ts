@@ -1,22 +1,30 @@
-import { CommonServiceIds } from "azure-devops-extension-api/Common";
+import { CommonServiceIds, IDocumentOptions, IGlobalMessageBanner, IMessageDialogOptions, IProjectInfo } from "azure-devops-extension-api/Common";
 import { BuildServiceIds, IBuildPageData } from "azure-devops-extension-api/Build";
 import { IBuildConfiguration } from "../Config/Models";
 
 const mockData = {
-    buildPageData: <IBuildPageData>{
+    buildPageData: <IBuildPageData><unknown>{
         build: {
             id: 2,
+            sourceBranch: 'hotfix',
+            sourceRepositoryName: 'FakeRepo',
         },
         definition: {
             id: 1,
-        }
+        },
     },
     buildConfigurations: <IBuildConfiguration[]>[{
         buildDefinitionId: 1,
         gitPath: '/path/to/git',
         artifact: 'report_?.zip',
-    }]
+    }],
 }
+
+export let messages: {
+    message?: string,
+    okAction?: () => Promise<void>,
+    cancelAction?: () => Promise<void>,
+}[] = [];
 
 export function init(): Promise<void> {
     return new Promise((resolve, reject) => resolve());
@@ -26,11 +34,54 @@ export function ready(): Promise<void> {
     return new Promise((resolve, reject) => resolve());
 }
 
-export const mockOpenMessageDialog = jest.fn();
-export const mockCloseBanner = jest.fn();
-export const mockGetProject = jest.fn();
+function openMessageDialog(message: string, options?: IMessageDialogOptions) {
+    messages.push({
+        message,
+        okAction: async () => {
+            const onClose = options?.onClose;
+            if (onClose) {
+                const asyncOnClose = onClose as (confirm: boolean) => Promise<void>;
+                await asyncOnClose(true);
+            }
+        },
+        cancelAction: async () =>{
+            const onClose = options?.onClose;
+            if (onClose) {
+                const asyncOnClose = onClose as (confirm: boolean) => Promise<void>;
+                await asyncOnClose(false);
+            }
+        }
+    });
+}
 
-export const mockGetExtensionDataManager = jest.fn(dataManager => ({
+function addBanner(banner: IGlobalMessageBanner) {
+
+    const { messageFormat, messageLinks } = banner;
+
+    if (messageFormat && messageLinks) {
+
+        // Replace {0} placeholders
+        const message = messageFormat
+            .replace(/\{(\d)\}/g, (_, c) =>
+                messageLinks[parseInt(c)].href);
+
+        messages.push({ message });
+
+    } else {
+        
+        messages.push({ message: banner.message });
+    }
+
+}
+
+async function getProject(): Promise<IProjectInfo | undefined> {
+    return {
+        id: 'projectx',
+        name: 'ProjectX',
+    } as IProjectInfo;
+}
+
+const getExtensionDataManager = jest.fn(dataManager => ({
     getValue(id: string) {
         switch (id) {
             case 'buildConfigurations':
@@ -39,6 +90,9 @@ export const mockGetExtensionDataManager = jest.fn(dataManager => ({
             default:
                 return {};
         }
+    },
+    async setValue<T>(key: string, value: T, documentOptions?: IDocumentOptions): Promise<T> {
+        return value;
     }
 }));
 
@@ -54,22 +108,23 @@ export function getService(contributionId: string) {
     switch (contributionId) {
         case CommonServiceIds.HostPageLayoutService:
             return {
-                openMessageDialog: mockOpenMessageDialog,
+                openMessageDialog,
             };
 
         case CommonServiceIds.GlobalMessagesService:
             return {
-                closeBanner: mockCloseBanner,
+                addBanner,
+                closeBanner: jest.fn(),
             };
 
         case CommonServiceIds.ProjectPageService:
             return {
-                getProject: mockGetProject,
+                getProject,
             };
 
         case CommonServiceIds.ExtensionDataService:
             return {
-                getExtensionDataManager: mockGetExtensionDataManager,
+                getExtensionDataManager,
             };
     
         case BuildServiceIds.BuildPageDataService:

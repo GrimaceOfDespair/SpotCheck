@@ -28,6 +28,7 @@ export function setPullRequest(comments?: Comment[]) {
 }
 
 export class WebApi {
+    static PagedList: PromiseConstructor;
     constructor(defaultUrl: string, authHandler: IRequestHandler, options?: IRequestOptions, requestSettings?: IWebApiRequestSettings) {
     }
 

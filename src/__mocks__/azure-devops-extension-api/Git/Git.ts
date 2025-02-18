@@ -1,4 +1,4 @@
-export declare enum VersionControlChangeType {
+export enum VersionControlChangeType {
     None = 0,
     Add = 1,
     Edit = 2,
@@ -15,13 +15,12 @@ export declare enum VersionControlChangeType {
     Property = 4096,
     All = 8191
 }
-
 export interface ItemContent {
     content: string;
     contentType: ItemContentType;
 }
 
-export declare enum ItemContentType {
+export enum ItemContentType {
     RawText = 0,
     Base64Encoded = 1
 }
@@ -108,7 +107,7 @@ export interface ItemModel {
     url: string;
 }
 
-export declare enum GitObjectType {
+export enum GitObjectType {
     Bad = 0,
     Commit = 1,
     Tree = 2,
