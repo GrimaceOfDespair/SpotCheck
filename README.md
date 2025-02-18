@@ -52,14 +52,15 @@ Process Cypress Image Diff report:
     mode: 'cypress'
 ```
 
-Process Robot report with screenshots in a subfolder without posting comments
-on the related pull request.
+Process Robot report with screenshots in a subfolder without posting comments on the
+related pull request, while flattening the images paths to a single parent folder.
 ``` yaml
 - task: SpotCheck@1
   inputs:
     input: '$(Build.Repository.LocalPath)/Automation/robot-output.xml'
     baseDir: '$(Build.Repository.LocalPath)/Automation/screenshots'
     skipFeedback: true
+    normalizePaths: true
 ```
 
 Differences against the baseline are reported through a dedicated threadon the PR. When a difference is resolved, the thread will automatically resolve.

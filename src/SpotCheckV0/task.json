@@ -67,6 +67,14 @@
             "helpMarkDown": "Do not post comments on related pull request"
         },
         {
+            "name": "normalizePaths",
+            "type": "boolean",
+            "label": "Normalize image paths",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Flatten image path folder and remove spaces"
+        },
+        {
             "name": "artifactName",
             "type": "string",
             "label": "Artifact name",
