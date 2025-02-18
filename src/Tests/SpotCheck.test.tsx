@@ -52,8 +52,6 @@ describe('SpotCheckContent', () => {
 
         await screen.findByText(/Listsandstaticsegments/i);
 
-        
-
     });
 
 })

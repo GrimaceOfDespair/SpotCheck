@@ -51,6 +51,21 @@ describe('SpotCheckV0 Suite', function () {
 
   }, 30 * 1000);
 
+  test('Normalized robot report without PullRequest', async () => {
+
+    const testRunner = createTestRunner('RobotReportNormalized.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual(['No pull request found to update']);
+    expect(testRunner.isUploaded('screenshots'));
+
+  }, 30 * 1000);
+
   test('Input failing report for PullRequest without thread', async () => {
 
     const testRunner = createTestRunner('FailWithoutThread.ts');
@@ -104,6 +119,22 @@ describe('SpotCheckV0 Suite', function () {
     expect(testRunner.warningIssues).toEqual([]);
     expect(testRunner.isUploaded('screenshots'));
     expect(testRunner.stdOutContained('E2E report contains no failures')).toBe(true);
+
+  }, 30 * 1000);
+
+  test('Input passing report for PullRequest with existing thread', async () => {
+
+    const testRunner = createTestRunner('PassWithThread.ts');
+
+    await testRunner.runAsync();
+
+    console.log(testRunner.stdout);
+
+    expect(testRunner.stderr).toBe('');
+    expect(testRunner.errorIssues).toEqual([]);
+    expect(testRunner.warningIssues).toEqual([]);
+    expect(testRunner.isUploaded('screenshots'));
+    expect(testRunner.stdOutContained('Close pending comments on thread')).toBe(true);
 
   }, 30 * 1000);
 

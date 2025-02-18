@@ -5,8 +5,11 @@ import { SaxParserRecorder, State } from "./SaxParserRecorder";
 
 export class RobotReportRecorder implements SaxParserRecorder {
 
+    constructor(private normalizePaths: boolean) {
+    }
+
     tests: IRobotTest[] = [];
-    isKeyword: boolean = false;
+    keywordLevel: number = 0;
     isArg: boolean = false;
     isStatus: boolean = false;
     captureScreenshot: string = '';
@@ -27,9 +30,14 @@ export class RobotReportRecorder implements SaxParserRecorder {
     }
 
     normalize(screenshot: string) {
-        const normalizedScreenshot = screenshot
-            .replace(/ /g, '_')
-            .replace(/[^-\w.]/g, '');
+
+        let normalizedScreenshot = screenshot;
+        if (this.normalizePaths) {
+            normalizedScreenshot = screenshot
+                .replace(/ /g, '_')
+                .replace(/\//g, '.')
+                .replace(/[^-\w.]/g, '');
+        }
 
         switch (normalizedScreenshot) {
             case '':
@@ -53,7 +61,8 @@ export class RobotReportRecorder implements SaxParserRecorder {
         const { suiteStack, test, source } = this.testContext;
         const [ snapshot, imageThreshold ] = this.testContext.args;
         const suite = suiteStack[suiteStack.length-1];
-        const imageName = this.normalize([...suiteStack, snapshot, 'png'].join('.'));
+        const stackPath = suiteStack.join('.');
+        const imageName = this.normalize(`${stackPath}/${snapshot}.png`);
 
         this.tests.push({
             suite,
@@ -79,8 +88,10 @@ export class RobotReportRecorder implements SaxParserRecorder {
                 break;
 
             case 'kw':
-                this.isKeyword = true;
-                this.testContext.args = [];
+                if (this.keywordLevel == 0) {
+                    this.testContext.args = [];
+                }
+                this.keywordLevel++;
                 break;
 
             case 'arg':
@@ -101,7 +112,7 @@ export class RobotReportRecorder implements SaxParserRecorder {
                 break;
 
             case 'kw':
-                this.isKeyword = false;
+                this.keywordLevel--;
                 break;
 
             case 'arg':
@@ -111,7 +122,7 @@ export class RobotReportRecorder implements SaxParserRecorder {
     }
 
     onText(text: string) {
-        if (this.isKeyword && this.isArg) {
+        if (this.keywordLevel == 1 && this.isArg) {
             this.testContext.args.push(text);
         }
     }

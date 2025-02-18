@@ -15,11 +15,15 @@ export class ReportContext {
     }
 
     resolveRelative(version: string, image: string): string {
-        return path.join(version, image);
+        return [version, image]
+            .filter(_ => _)
+            .join('/');
     }
 
     resolveAbsolute(version: string, image: string): string {
-        return path.join(this._baseDir, version, image);
+        return [this._baseDir, version, image]
+            .filter(_ => _)
+            .join('/');
     }
 
     reportFile: string;

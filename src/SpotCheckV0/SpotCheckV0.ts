@@ -33,8 +33,10 @@ function throwExpression(errorMessage: string): never {
         switch (type) {
             case 'robot':
 
+                const normalizePaths = tl.getBoolInput('normalizePaths');
+
                 diffReport = await new RobotFileParser(input, baseDir)
-                    .createDiffReport();
+                    .createDiffReport(normalizePaths);
 
                 break;
 
