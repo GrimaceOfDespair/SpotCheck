@@ -87,7 +87,6 @@
       "\\.(css|less|scss)$": "<rootDir>/src/__mocks__/styleMock.js"
     },
     "preset": "ts-jest",
-    "testResultsProcessor": "./node_modules/jest-junit-reporter",
     "collectCoverage": true,
     "coverageReporters": [
       "json",
