@@ -97,8 +97,10 @@ export class ImageProcessor {
 
         if (testFailed) {
             await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
-            diffImg.pack().pipe(createWriteStream(
+            const stream = createWriteStream(
                 this.normalize(diffPath)));
+            diffImg.pack().pipe(stream);
+            stream.end();
         }
     
         return { percentage, testFailed };
