@@ -98,7 +98,7 @@ export class ImageProcessor {
         if (testFailed) {
             await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
             const stream = createWriteStream(
-                this.normalize(diffPath)));
+                this.normalize(diffPath));
             diffImg.pack().pipe(stream);
             stream.end();
         }
