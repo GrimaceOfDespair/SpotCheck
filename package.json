@@ -54,7 +54,7 @@
     "sass": "^1.85.0",
     "sass-loader": "^14.2.1",
     "style-loader": "^4.0.0",
-    "tfx-cli": "^0.20.0",
+    "tfx-cli": "^0.21.1",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
     "tsx": "^4.19.3",
