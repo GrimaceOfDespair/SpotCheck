@@ -140,4 +140,40 @@ describe('ImageProcessor', () => {
     expect(testFailed).toBe(true);
     expect(percentage).toBe(1);
   });
+
+  test('Log not found comparison image', async () => {
+
+    // Arrange
+    var errorMessage: string = undefined;
+    const error = (message: string) => errorMessage = message;
+    const processor = new ImageProcessor(imageBase, { info: () => {}, error });
+
+    // Adt
+    const { percentage, testFailed } = await processor.compareImage(
+        'tux-16bit.png',
+        'comparison-notfound.png',
+        '',
+        .1);
+
+    // Assert
+    expect(errorMessage).toContain('Failed to parse comparison image: comparison-notfound.png');
+  });
+
+  test('Log not found baseline image', async () => {
+
+    // Arrange
+    var errorMessage: string = undefined;
+    const error = (message: string) => errorMessage = message;
+    const processor = new ImageProcessor(imageBase, { info: () => {}, error });
+
+    // Adt
+    const { percentage, testFailed } = await processor.compareImage(
+        'baseline-notfound.png',
+        '',
+        '',
+        .1);
+
+    // Assert
+    expect(errorMessage).toContain('Failed to parse baseline image: baseline-notfound.png');
+  });
 })

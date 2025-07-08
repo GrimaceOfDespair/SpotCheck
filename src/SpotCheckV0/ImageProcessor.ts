@@ -3,13 +3,16 @@ import { createReadStream, createWriteStream } from "node:fs";
 import path from 'node:path';
 import fs from 'node:fs';
 import Pixelmatch from 'pixelmatch';
+import { ILogger } from './Report/ILogger';
 
 export class ImageProcessor {
 
     private _baseDir: string;
+    private _logger: ILogger;
 
-    constructor(baseDir?: string) {
+    constructor(baseDir?: string, logger?: ILogger) {
         this._baseDir = baseDir ?? __dirname;
+        this._logger = logger ?? { info: () => {}, error: () => {}};
     }
 
     normalize(file: string) {
@@ -58,12 +61,14 @@ export class ImageProcessor {
         try {
             baselineImg = await this.parseImage(baselinePath);
         } catch (e) {
+            this._logger.error(`Failed to parse baseline image: ${baselinePath}: ${e}`);
             return { percentage: 1, testFailed: true };
         }
         let comparisonImg: PNG;
         try {
             comparisonImg = await this.parseImage(comparisonPath);
         } catch (e) {
+            this._logger.error(`Failed to parse comparison image: ${comparisonPath}: ${e}`);
             return { percentage: 1, testFailed: true };
         }
         const diffImg = new PNG({
@@ -95,7 +100,12 @@ export class ImageProcessor {
         const percentage = (pixelMismatchResult / diffImg.width / diffImg.height) ** 0.5;
         const testFailed = percentage > threshold;
 
+        this._logger.info(`Image difference ${percentage}%: ${baselineImg} vs ${comparisonImg}`);
+
         if (testFailed) {
+
+            this._logger.info(`Creating difference into ${diffPath}`);
+
             await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
             diffImg.pack().pipe(createWriteStream(
                 this.normalize(diffPath)));
