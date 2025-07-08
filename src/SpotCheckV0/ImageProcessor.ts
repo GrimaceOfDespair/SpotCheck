@@ -107,10 +107,9 @@ export class ImageProcessor {
             this._logger.info(`Creating difference into ${diffPath}`);
 
             await fs.promises.mkdir(path.dirname(diffPath), { recursive: true });
-            const stream = createWriteStream(
-                this.normalize(diffPath));
-            diffImg.pack().pipe(stream);
-            stream.end();
+            
+            const buffer = PNG.sync.write(diffImg);
+            fs.writeFileSync(this.normalize(diffPath), buffer);
         }
     
         return { percentage, testFailed };
