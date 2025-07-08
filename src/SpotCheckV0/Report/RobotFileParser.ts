@@ -16,13 +16,14 @@ export class RobotFileParser {
     defaultThreshold: number = .05;
 
     private _context: ReportContext;
-    private _images: ImageProcessor = new ImageProcessor();
+    private _images: ImageProcessor;
     private _logger: ILogger;
 
     constructor(reportFile: string, baseDir?: string, logger?: ILogger) {
         this._context = new ReportContext(reportFile,
             baseDir ?? path.dirname(reportFile));
         this._logger = logger ?? NullLogger;
+        this._images = new ImageProcessor(baseDir, this._logger);
     }
 
     async createDiffReport(normalizePaths: boolean = true): Promise<IDiffTestReport> {
